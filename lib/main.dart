@@ -2,5 +2,5 @@ import 'package:flutter/material.dart';
 import 'package:luso/AppWidget.dart';
 
 void main() {
-  runApp(Appwidget());
+  runApp(const MyApp());
 }

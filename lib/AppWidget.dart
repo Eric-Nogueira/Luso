@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'PresentationPage.dart';
 import 'package:luso/HomePage.dart';
 
-class Appwidget extends StatelessWidget{
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(brightness: Brightness.light, iconTheme: IconThemeData(color: Colors.white,)),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       initialRoute: '/',
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => PresentationPage(),
-        '/home': (context) => HomePage(),
+        '/': (context) => const PresentationPage(),
+        '/home': (context) => const HomePage(),
       },
     );
   }
