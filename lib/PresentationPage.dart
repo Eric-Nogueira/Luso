@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:luso/Assets.dart';
 
 class PresentationPage extends StatefulWidget {
   const PresentationPage({super.key});
@@ -9,68 +9,116 @@ class PresentationPage extends StatefulWidget {
 }
 
 class _PresentationPageState extends State<PresentationPage> {
-  @override
-  void initState() {
-    super.initState();
-    // Schedule the navigation after a delay
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
-      // Use Navigator.pushReplacement to navigate to the new page
-      // and prevent going back to the splash screen
-      Navigator.pushReplacementNamed(context, '/home');
-    });
-  }
+  final Assets assets = Assets();
 
   @override
   Widget build(BuildContext context) {
-    final double larguraTela = MediaQuery.of(context).size.width;
-    //final double alturaTela = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
+    return Center(
+      child: Stack(
         children: [
-          // Container com o gradiente (plano de fundo)
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(255, 0, 87, 180),
-                  Color.fromARGB(255, 17, 0, 116),
-                ],
-              ),
-            ),
-          ),
-          // Texto centralizado
+          assets.background(),
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-              'assets/img/LOGO_LUSO.png',
-              fit: BoxFit.fitWidth,
-              width: 220,
-            ),
-            Text(
-              'Gabaritando o Enem sem complicação',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-                color: Colors.white,
-              ),
-            )
+                  'assets/img/mascotevars/mascote_initial.png',
+                  fit: BoxFit.fitWidth,
+                  width: 100,
+                ),
+                Image.asset(
+                  'assets/img/logo/LOGO_LUSO_DARK.png',
+                  fit: BoxFit.fitWidth,
+                  width: 150,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Gabaritando o Enem sem complicação',
+                  style: TextStyle(
+                    decoration: TextDecoration.none,
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                    color: Color.fromARGB(255, 52, 55, 127),
+                  ),
+                ),
               ],
-            )
+            ),
           ),
-          // Imagem alinhada na parte inferior
           Align(
             alignment: Alignment.bottomCenter,
-            child: Image.asset(
-              'assets/img/MASCOTE_LUSO.png',
-              fit: BoxFit.fitWidth,
-              width: larguraTela,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 32.0),
+              child: Column(
+                spacing: 14,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 0, 3, 95).withValues(alpha: 0.5),
+                          blurRadius: 0,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 0, 5, 145),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Quero me cadastrar',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 4, 10, 183).withValues(alpha: 0.5),
+                          blurRadius: 0,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 0, 8, 239),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Já tenho uma conta',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ],
