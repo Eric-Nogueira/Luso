@@ -38,6 +38,7 @@ class _PresentationPageState extends State<PresentationPage> {
                     decoration: TextDecoration.none,
                     fontSize: 12,
                     fontWeight: FontWeight.normal,
+                    fontFamily: 'Inter',
                     color: Color.fromARGB(255, 52, 55, 127),
                   ),
                 ),

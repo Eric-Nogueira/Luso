@@ -57,6 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Gabaritando o Enem sem complicação',
               style: const TextStyle(
                 fontSize: 12,
+                fontFamily: 'Inter',
                 fontWeight: FontWeight.normal,
                 color: Colors.white,
               ),
