@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'PresentationPage.dart';
-import 'package:luso/HomePage.dart';
-import 'package:luso/SplashScreen.dart';
+import 'pages/PresentationPage.dart';
+import 'package:luso/pages/HomePage.dart';
+import 'package:luso/pages/SplashScreen.dart';
+import 'package:luso/pages/login/Login.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/presentation': (context) => const PresentationPage(),
         '/home': (context) => const HomePage(),
+        '/login': (context) => const LoginPage(),
       },
     );
   }
