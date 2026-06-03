@@ -51,6 +51,7 @@ class LoginPage extends StatelessWidget {
                     // Lógica de login aqui
                   },
                   const Color.fromARGB(255, 0, 5, 145),
+                  400,
                 ),
               ],
             ),

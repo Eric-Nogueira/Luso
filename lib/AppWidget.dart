@@ -4,6 +4,8 @@ import 'package:luso/pages/HomePage.dart';
 import 'package:luso/pages/SplashScreen.dart';
 import 'package:luso/pages/login/Login.dart';
 import 'package:luso/pages/login/ForgetPassword.dart';
+import 'package:luso/pages/signin/SignIn.dart';
+import 'package:luso/pages/signin/SetPassword.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/login': (context) => const LoginPage(),
         '/forget_password': (context) => const ForgetPasswordPage(),
+        '/signin': (context) => const SigninPage(),
+        '/set_password': (context) => const SetPasswordPage(),
       },
     );
   }

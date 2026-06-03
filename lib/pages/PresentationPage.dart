@@ -54,12 +54,12 @@ class _PresentationPageState extends State<PresentationPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   assets.elbutton('Quero me cadastrar', () {
-                    Navigator.pushReplacementNamed(context, '/login');
-                  }, const Color.fromARGB(255, 0, 8, 239)),
+                    Navigator.pushReplacementNamed(context, '/signin');
+                  }, const Color.fromARGB(255, 0, 8, 239), 300),
 
                   assets.elbutton('Já tenho uma conta', () {
                     Navigator.pushReplacementNamed(context, '/login');
-                  }, const Color.fromARGB(255, 4, 10, 183)),
+                  }, const Color.fromARGB(255, 4, 10, 183), 300),
                   SizedBox(height: 24),
                 ],
               ),

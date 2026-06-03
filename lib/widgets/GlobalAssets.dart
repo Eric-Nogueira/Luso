@@ -24,8 +24,8 @@ class Assets {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color.fromARGB(255, 231, 231, 231),
-                Color.fromARGB(255, 200, 200, 200),
+                Color.fromARGB(255, 250, 250, 250),
+                Color.fromARGB(255, 220, 220, 220),
               ],
             ),
           ),
@@ -34,7 +34,7 @@ class Assets {
     );
   }
 
-  Widget elbutton(String text, VoidCallback onPressed, Color bgColor) {
+  Widget elbutton(String text, VoidCallback onPressed, Color bgColor, int width) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
@@ -46,7 +46,7 @@ class Assets {
           ),
         ],
       ),
-      width: 300,
+      width: width.isNaN ? 300 : width.toDouble()+10,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -56,7 +56,7 @@ class Assets {
           ),
         ),
         child: SizedBox(
-          width: 300,
+          width: width.isNaN ? 300 : width.toDouble()+10,
           child: Text(
             text,
             textAlign: TextAlign.center,
