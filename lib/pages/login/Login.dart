@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luso/Assets.dart';
+import 'package:luso/widgets/GlobalAssets.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -81,7 +81,7 @@ class _SpeechBubbleRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Padding(
-            padding: EdgeInsets.only(top: 16.0, left: 16.0),
+            padding: EdgeInsets.only(top: 20.0, left: 16.0),
             child: Text(LoginPage._speechText, style: LoginPage._speechStyle),
           ),
         ),
@@ -95,7 +95,8 @@ class _LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return 
+    Column(
       mainAxisSize: MainAxisSize.min,
       children: const [
         _EmailTextField(),
@@ -161,7 +162,7 @@ class _PasswordTextField extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: TextButton(
       onPressed: () {
-        // Lógica para recuperar senha aqui
+        Navigator.pushNamed(context, '/forget_password');
       },
       child: const Text(
         'Esqueci minha senha',

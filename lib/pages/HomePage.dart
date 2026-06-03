@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luso/Assets.dart';
+import 'package:luso/widgets/GlobalAssets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

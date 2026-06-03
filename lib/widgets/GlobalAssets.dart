@@ -35,22 +35,37 @@ class Assets {
   }
 
   Widget elbutton(String text, VoidCallback onPressed, Color bgColor) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: bgColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: bgColor.withAlpha(150),
+            blurRadius: 0,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      child: SizedBox(
-        width: 300,
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
-            fontFamily: 'Inter',
-            color: Colors.white,
-            decoration: TextDecoration.none,
+      width: 300,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: bgColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: SizedBox(
+          width: 300,
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: 'Inter',
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
           ),
         ),
       ),

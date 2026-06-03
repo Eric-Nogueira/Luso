@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luso/Assets.dart';
+import 'package:luso/widgets/GlobalAssets.dart';
 
 class PresentationPage extends StatefulWidget {
   const PresentationPage({super.key});
@@ -53,46 +53,13 @@ class _PresentationPageState extends State<PresentationPage> {
                 spacing: 14,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(255, 0, 3, 95).withValues(alpha: 0.5),
-                          blurRadius: 0,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    width: 300,
-                    child: assets.elbutton(
-                      'Quero me cadastrar',
-                      () {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
-                      const Color.fromARGB(255, 0, 8, 239),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(255, 4, 10, 183).withValues(alpha: 0.5),
-                          blurRadius: 0,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    width: 300,
-                    child: assets.elbutton(
-                      'Já tenho uma conta',
-                      () {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
-                      const Color.fromARGB(255, 4, 10, 183),
-                    ),
-                  ),
+                  assets.elbutton('Quero me cadastrar', () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  }, const Color.fromARGB(255, 0, 8, 239)),
+
+                  assets.elbutton('Já tenho uma conta', () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  }, const Color.fromARGB(255, 4, 10, 183)),
                   SizedBox(height: 24),
                 ],
               ),
