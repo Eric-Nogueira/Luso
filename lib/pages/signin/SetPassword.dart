@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:luso/widgets/GlobalAssets.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SetPasswordPage extends StatefulWidget {
   const SetPasswordPage({super.key});
@@ -73,8 +73,8 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   }
 
   void getData() async {
-    String url = 'http://localhost:3000';
-    http.Response response = await http.get(Uri.parse(url));
+    final url = dotenv.env['API_URL'];
+    http.Response response = await http.get(Uri.parse(url!));
     if (response.statusCode == 200) {
       setState(() {
         __resposta = response.body;
