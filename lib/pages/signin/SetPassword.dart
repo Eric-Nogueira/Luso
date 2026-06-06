@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:luso/widgets/GlobalAssets.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'package:http/http.dart' as http;
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SetPasswordPage extends StatefulWidget {
   const SetPasswordPage({super.key});
@@ -14,10 +14,9 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
 
   static const _passwordHint = 'Senha';
   static const _confirmPasswordHint = 'Confirme sua senha';
-  static var _speechText = 'Escolha uma senha legal e segura!';
+  static const _speechText = 'Escolha uma senha legal e segura!';
   static const _backIconColor = Color.fromARGB(255, 0, 3, 95);
   static const _containerColor = Color.fromARGB(255, 6, 10, 110);
-  var __resposta = 'Resposta da API';
   static const _speechStyle = TextStyle(
     fontSize: 14,
     fontFamily: 'Inter',
@@ -38,7 +37,6 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(__resposta, style: const TextStyle(color: Color.fromARGB(255, 255, 0, 0))),
                 Align(
                   alignment: Alignment.topLeft,
                   child: IconButton(
@@ -58,8 +56,7 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
                 const SizedBox(height: 32),
                 Assets().elbutton(
                   'Entrar',
-                  () {
-                    getData(); // Lógica de login aqui
+                  () { // Lógica de login aqui
                   },
                   const Color.fromARGB(255, 0, 5, 145),
                   400,
@@ -70,20 +67,6 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
         ],
       ),
     );
-  }
-
-  void getData() async {
-    final url = dotenv.env['API_URL'];
-    http.Response response = await http.get(Uri.parse(url!));
-    if (response.statusCode == 200) {
-      setState(() {
-        __resposta = response.body;
-      });
-    } else {
-      setState(() {
-        __resposta = 'Erro ao obter dados';
-      });
-    }
   }
 }
 
