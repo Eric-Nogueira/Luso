@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:luso/widgets/GlobalAssets.dart';
+import 'package:http/http.dart' as http;
 
-class SetPasswordPage extends StatelessWidget {
+class SetPasswordPage extends StatefulWidget {
   const SetPasswordPage({super.key});
+
+  @override
+  State<SetPasswordPage> createState() => _SetPasswordPageState();
+}
+
+class _SetPasswordPageState extends State<SetPasswordPage> {
 
   static const _passwordHint = 'Senha';
   static const _confirmPasswordHint = 'Confirme sua senha';
-  static const _speechText = 'Escolha uma senha legal e segura!';
+  static var _speechText = 'Escolha uma senha legal e segura!';
   static const _backIconColor = Color.fromARGB(255, 0, 3, 95);
   static const _containerColor = Color.fromARGB(255, 6, 10, 110);
+  var __resposta = 'Resposta da API';
   static const _speechStyle = TextStyle(
     fontSize: 14,
     fontFamily: 'Inter',
@@ -26,8 +35,10 @@ class SetPasswordPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 64.0, left: 16.0, right: 16.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Text(__resposta, style: const TextStyle(color: Color.fromARGB(255, 255, 0, 0))),
                 Align(
                   alignment: Alignment.topLeft,
                   child: IconButton(
@@ -48,7 +59,7 @@ class SetPasswordPage extends StatelessWidget {
                 Assets().elbutton(
                   'Entrar',
                   () {
-                    // Lógica de login aqui
+                    getData(); // Lógica de login aqui
                   },
                   const Color.fromARGB(255, 0, 5, 145),
                   400,
@@ -59,6 +70,20 @@ class SetPasswordPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void getData() async {
+    String url = 'http://localhost:3000';
+    http.Response response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      setState(() {
+        __resposta = response.body;
+      });
+    } else {
+      setState(() {
+        __resposta = 'Erro ao obter dados';
+      });
+    }
   }
 }
 
@@ -78,12 +103,12 @@ class _SpeechBubbleRow extends StatelessWidget {
           width: 260,
           height: 55,
           decoration: BoxDecoration(
-            color: SetPasswordPage._containerColor,
+            color: _SetPasswordPageState._containerColor,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Padding(
+          child: Padding(
             padding: EdgeInsets.only(top: 20.0, left: 10.0),
-            child: Text(SetPasswordPage._speechText, style: SetPasswordPage._speechStyle),
+            child: Text(_SetPasswordPageState._speechText, style: _SetPasswordPageState._speechStyle),
           ),
         ),
       ],
@@ -125,7 +150,7 @@ class _PasswordTextField extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          hintText: SetPasswordPage._passwordHint,
+          hintText: _SetPasswordPageState._passwordHint,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -153,7 +178,7 @@ class _ConfirmPasswordTextField extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          hintText: SetPasswordPage._confirmPasswordHint,
+          hintText: _SetPasswordPageState._confirmPasswordHint,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
