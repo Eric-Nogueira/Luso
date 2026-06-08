@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:luso/widgets/GlobalAssets.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
+import 'package:luso/functions/Func.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
   static const _emailHint = 'E-mail';
   static const _nameHint = 'Nome';
-  static const _speechText = 'Me fale seu nome e seu e-mail!';
+  static const _passwordHint = 'Senha';
+  static const _confirmPasswordHint = 'Confirme sua senha';
+  static const _speechText = 'Me fale seu nome, e-mail e escolha uma senha!';
   static const _backIconColor = Color.fromARGB(255, 0, 3, 95);
   static const _containerColor = Color.fromARGB(255, 6, 10, 110);
   static const _speechStyle = TextStyle(
@@ -25,20 +25,12 @@ class SigninPage extends StatefulWidget {
 class _SigninPageState extends State<SigninPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   Future<void> sendViaPost() async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/newUser.php');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': _emailController.text, 'name': _nameController.text}),
-      );
-      if (response.statusCode == 200) {
-        print('Response from server: ${response.body}');
-      } else {
-        print('Server error: ${response.statusCode}');
-      }
+      await Func().sendViaPost(_emailController.text, _nameController.text, _passwordController.text, _confirmPasswordController.text);
     } catch (e) {
       print('Erro ao enviar dados: $e');
     }
@@ -77,7 +69,6 @@ class _SigninPageState extends State<SigninPage> {
                   'Continuar',
                   () async {
                    await sendViaPost(); // Lógica de login aqui
-                    Navigator.pushReplacementNamed(context, '/set_password');
                   },
                   const Color.fromARGB(255, 0, 5, 145),
                   400,
@@ -131,6 +122,10 @@ class _LoginForm extends StatelessWidget {
         _NameTextField(),
         SizedBox(height: 16),
         _EmailTextField(),
+        SizedBox(height: 16),
+        _PasswordTextField(),
+        SizedBox(height: 16),
+        _ConfirmPasswordTextField(),
       ],
     );
   }
@@ -191,5 +186,68 @@ class _NameTextField extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _PasswordTextField extends StatelessWidget {
+  const _PasswordTextField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+        padding: const EdgeInsets.all(2.0),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 6, 10, 110),
+          borderRadius: BorderRadius.circular(14),
+      ),
+      child: TextField(
+        controller: context
+            .findAncestorStateOfType<_SigninPageState>()
+            ?._passwordController,
+        obscureText: true,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: SigninPage._passwordHint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    ),
+    ]);
+  }
+}
+class _ConfirmPasswordTextField extends StatelessWidget {
+  const _ConfirmPasswordTextField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+        padding: const EdgeInsets.all(2.0),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 6, 10, 110),
+          borderRadius: BorderRadius.circular(14),
+      ),
+      child: TextField(
+        controller: context
+            .findAncestorStateOfType<_SigninPageState>()
+            ?._confirmPasswordController,
+        obscureText: true,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: SigninPage._confirmPasswordHint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    ),
+    ]);
   }
 }
