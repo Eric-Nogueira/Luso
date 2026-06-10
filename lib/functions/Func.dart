@@ -1,4 +1,3 @@
-//import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -33,6 +32,11 @@ class Func {
 
         print('POST ${url.toString()} -> ${response.statusCode}');
         print(response.body);
+
+        if (response.body.toString().contains('Usuário já cadastrado')) {
+          print('Email já cadastrado');
+          return 7;
+        }
 
         if (response.statusCode < 200 || response.statusCode >= 300) {
           return 5;

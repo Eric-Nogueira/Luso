@@ -11,6 +11,7 @@ class SigninPage extends StatefulWidget {
     4: 'Formato de email inválido',
     5: 'Falha ao enviar dados, tente novamente mais tarde',
     6: 'Erro ao enviar dados, tente novamente mais tarde',
+    7: 'Email já cadastrado, use outro email ou faça login',
   };
   const SigninPage({super.key});
   static const _emailHint = 'E-mail';
