@@ -3,6 +3,15 @@ import 'package:luso/widgets/GlobalAssets.dart';
 import 'package:luso/functions/Func.dart';
 
 class SigninPage extends StatefulWidget {
+  static const cases = {
+    0: 'Sucesso',
+    1: 'Todos os campos são obrigatórios',
+    2: 'As senhas não coincidem',
+    3: 'A senha deve conter pelo menos 8 caracteres',
+    4: 'Formato de email inválido',
+    5: 'Falha ao enviar dados, tente novamente mais tarde',
+    6: 'Erro ao enviar dados, tente novamente mais tarde',
+  };
   const SigninPage({super.key});
   static const _emailHint = 'E-mail';
   static const _nameHint = 'Nome';
@@ -26,11 +35,28 @@ class _SigninPageState extends State<SigninPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   Future<void> sendViaPost() async {
     try {
-      await Func().sendViaPost(_emailController.text, _nameController.text, _passwordController.text, _confirmPasswordController.text);
+      final result = await Func().sendViaPost(
+        _emailController.text,
+        _nameController.text,
+        _passwordController.text,
+        _confirmPasswordController.text,
+      );
+      if (result != 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar (backgroundColor: const Color.fromARGB(255, 128, 9, 0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))), content: Text(SigninPage.cases[result]!)),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar (backgroundColor: const Color.fromARGB(255, 0, 128, 0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))), content: Text('Cadastro realizado com sucesso!')),
+        );
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } catch (e) {
       print('Erro ao enviar dados: $e');
     }
@@ -39,6 +65,7 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent, // Para o fundo do Stack aparecer
       body: Stack(
         children: [
@@ -68,7 +95,7 @@ class _SigninPageState extends State<SigninPage> {
                 Assets().elbutton(
                   'Continuar',
                   () async {
-                   await sendViaPost(); // Lógica de login aqui
+                    await sendViaPost(); // Lógica de login aqui
                   },
                   const Color.fromARGB(255, 0, 5, 145),
                   400,
@@ -96,13 +123,13 @@ class _SpeechBubbleRow extends StatelessWidget {
         ),
         Container(
           width: 250,
-          height: 55,
+          height: 60,
           decoration: BoxDecoration(
             color: SigninPage._containerColor,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Padding(
-            padding: EdgeInsets.only(top: 20.0, left: 16.0),
+            padding: EdgeInsets.only(top: 12.0, left: 16.0),
             child: Text(SigninPage._speechText, style: SigninPage._speechStyle),
           ),
         ),
@@ -116,17 +143,19 @@ class _LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: const [
-        _NameTextField(),
-        SizedBox(height: 16),
-        _EmailTextField(),
-        SizedBox(height: 16),
-        _PasswordTextField(),
-        SizedBox(height: 16),
-        _ConfirmPasswordTextField(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          _NameTextField(),
+          SizedBox(height: 16),
+          _EmailTextField(),
+          SizedBox(height: 16),
+          _PasswordTextField(),
+          SizedBox(height: 16),
+          _ConfirmPasswordTextField(),
+        ],
+      ),
     );
   }
 }
@@ -194,60 +223,65 @@ class _PasswordTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        padding: const EdgeInsets.all(2.0),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 6, 10, 110),
-          borderRadius: BorderRadius.circular(14),
-      ),
-      child: TextField(
-        controller: context
-            .findAncestorStateOfType<_SigninPageState>()
-            ?._passwordController,
-        obscureText: true,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          hintText: SigninPage._passwordHint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 6, 10, 110),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: TextField(
+            controller: context
+                .findAncestorStateOfType<_SigninPageState>()
+                ?._passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              hintText: SigninPage._passwordHint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-    ]);
+      ],
+    );
   }
 }
+
 class _ConfirmPasswordTextField extends StatelessWidget {
   const _ConfirmPasswordTextField();
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        padding: const EdgeInsets.all(2.0),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 6, 10, 110),
-          borderRadius: BorderRadius.circular(14),
-      ),
-      child: TextField(
-        controller: context
-            .findAncestorStateOfType<_SigninPageState>()
-            ?._confirmPasswordController,
-        obscureText: true,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          hintText: SigninPage._confirmPasswordHint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 6, 10, 110),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: TextField(
+            controller: context
+                .findAncestorStateOfType<_SigninPageState>()
+                ?._confirmPasswordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              hintText: SigninPage._confirmPasswordHint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-    ]);
+      ],
+    );
   }
 }
