@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:luso/widgets/GlobalAssets.dart';
+import 'package:luso/functions/Func.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   static const _emailHint = 'E-mail';
   static const _passwordHint = 'Senha';
   static const _speechText = 'Me fale seu e-mail e sua senha!';
+  static const cases = {
+    0: 'Sucesso',
+    1: 'Todos os campos são obrigatórios',
+    2: 'Formato de email inválido',
+    3: 'Falha ao enviar dados, tente novamente mais tarde',
+    4: 'Valores inválidos. Se não tiver conta, faça seu cadastro.',
+    5: 'Erro ao enviar dados, tente novamente mais tarde',
+  };
   static const _backIconColor = Color.fromARGB(255, 0, 3, 95);
   static const _containerColor = Color.fromARGB(255, 6, 10, 110);
   static const _speechStyle = TextStyle(
@@ -15,6 +24,36 @@ class LoginPage extends StatelessWidget {
     color: Colors.white,
     decoration: TextDecoration.none,
   );
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> doLogin() async {
+    try {
+      final result = await Func().login(
+        _emailController.text,
+        _passwordController.text,
+      );
+      if (result != 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar (backgroundColor: const Color.fromARGB(255, 128, 9, 0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))), content: Text(LoginPage.cases[result]!)),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar (backgroundColor: const Color.fromARGB(255, 0, 128, 0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))), content: Text('Cadastro realizado com sucesso!')),
+        );
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      print('Erro ao enviar dados: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +73,7 @@ class LoginPage extends StatelessWidget {
                     icon: const Icon(
                       Icons.arrow_back,
                       size: 30,
-                      color: _backIconColor,
+                      color: LoginPage._backIconColor,
                     ),
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/presentation');
@@ -47,8 +86,8 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(height: 32),
                 Assets().elbutton(
                   'Entrar',
-                  () {
-                    // Lógica de login aqui
+                  () async {
+                    await doLogin();
                   },
                   const Color.fromARGB(255, 0, 5, 145),
                   400,
@@ -96,8 +135,7 @@ class _LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: const [
         _EmailTextField(),
@@ -120,6 +158,7 @@ class _EmailTextField extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: TextField(
+        controller: context.findAncestorStateOfType<_LoginPageState>()?._emailController,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
@@ -139,41 +178,44 @@ class _PasswordTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        padding: const EdgeInsets.all(2.0),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 6, 10, 110),
-          borderRadius: BorderRadius.circular(14),
-      ),
-      child: TextField(
-        obscureText: true,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          hintText: LoginPage._passwordHint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 6, 10, 110),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: TextField(
+            controller: context.findAncestorStateOfType<_LoginPageState>()?._passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              hintText: LoginPage._passwordHint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-    Align(
-      alignment: Alignment.centerLeft,
-      child: TextButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/forget_password');
-      },
-      child: const Text(
-        'Esqueci minha senha',
-        style: TextStyle(
-          fontSize: 16,
-          color: Color.fromARGB(255, 0, 102, 255),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/send_email');
+            },
+            child: const Text(
+              'Esqueci minha senha',
+              style: TextStyle(
+                fontSize: 16,
+                color: Color.fromARGB(255, 0, 102, 255),
+              ),
+            ),
+          ),
         ),
-      ),
-    ),
-    )
-    ]);
+      ],
+    );
   }
 }
