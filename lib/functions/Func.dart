@@ -6,11 +6,19 @@ import 'package:crypto/crypto.dart';
 class Func {
   static String? token;
 
-  Future<int> sendViaPost(String email, String name, String password, String confirmPassword) async {
+  Future<int> sendViaPost(
+    String email,
+    String name,
+    String password,
+    String confirmPassword,
+  ) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/newUser.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
 
-      if (email.isEmpty || name.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      if (email.isEmpty ||  
+          name.isEmpty ||
+          password.isEmpty ||
+          confirmPassword.isEmpty) {
         print('Todos os campos são obrigatórios');
         return 1;
       } else if (password != confirmPassword) {
@@ -25,11 +33,15 @@ class Func {
       } else {
         final response = await http.post(
           url,
-          body: {
-            'email': email,
-            'name': name,
-            'password': sha256.convert(utf8.encode(password)).toString(),
-          },
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'operation': 'newUser',
+            'data': {
+              'email': email,
+              'name': name,
+              'password': sha256.convert(utf8.encode(password)).toString(),
+            },
+          }),
         );
 
         print('POST ${url.toString()} -> ${response.statusCode}');
@@ -54,7 +66,7 @@ class Func {
 
   Future<int> login(String email, String password) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/login.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
 
       if (email.isEmpty || password.isEmpty) {
         print('Todos os campos são obrigatórios');
@@ -65,10 +77,14 @@ class Func {
       } else {
         final response = await http.post(
           url,
-          body: {
-            'email': email,
-            'password': sha256.convert(utf8.encode(password)).toString(),
-          },
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'operation': 'login',
+            'data': {
+              'email': email,
+              'password': sha256.convert(utf8.encode(password)).toString(),
+            },
+          }),
         );
 
         print('POST ${url.toString()} -> ${response.statusCode}');
@@ -94,22 +110,22 @@ class Func {
 
   Future<int> sendEmail(String email) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/forgetPassword.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
 
-      if(email.isEmpty){
+      if (email.isEmpty) {
         print("Insira um email");
         return 1;
-      }
-      else if(!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)){
+      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
         print("Insira um e-mail válido");
         return 2;
-      }
-      else {
+      } else {
         final response = await http.post(
           url,
-          body: {
-            'email': email
-          },
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'operation': 'sendEmail',
+            'data': {'email': email},
+          }),
         );
 
         print('POST ${url.toString()} -> ${response.statusCode}');
@@ -123,11 +139,10 @@ class Func {
         if (responseData['status'] == 'success') {
           token = responseData['received']['token']?.toString();
           return 0;
-        } else if (responseData['status'] == 'failed'){
+        } else if (responseData['status'] == 'failed') {
           print('Erro ao enviar o e-mail de recuperação');
           return 4;
-        }
-        else {
+        } else {
           print("E-mail ausente no banco de dados");
           return 5;
         }
@@ -138,22 +153,22 @@ class Func {
     }
   }
 
-  Future<int> checkCode(int code) async{
-  try {
-    final url = Uri.parse('${dotenv.env['API_URL']!}/checkCode.php');
-    if(code.isNaN){
-      return 1;
-    } else if (token == null || token!.isEmpty) {
-      print('Token de recuperação indisponível');
-      return 6;
-    }
-    else {
-      final response = await http.post(
+  Future<int> checkCode(int code) async {
+    try {
+      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
+      if (code.isNaN) {
+        return 1;
+      } else if (token == null || token!.isEmpty) {
+        print('Token de recuperação indisponível');
+        return 6;
+      } else {
+        final response = await http.post(
           url,
-          body: {
-            'code': code.toString(),
-            'token': "$token\\"!
-          },
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'operation': 'checkCode',
+            'data': {'code': code.toString(), 'token': token},
+          }),
         );
 
         print('POST ${url.toString()} -> ${response.statusCode}');
@@ -166,21 +181,19 @@ class Func {
         final responseData = jsonDecode(response.body);
         if (responseData['status'] == 'success') {
           return 0;
-        } else if (responseData['status'] == 'failed'){
+        } else if (responseData['status'] == 'failed') {
           print('Código errado');
           print(code);
           print(token);
           return 3;
-        }
-        else {
+        } else {
           print("Erro ao enviar dados");
           return 4;
         }
+      }
+    } catch (e) {
+      print("Erro: $e");
+      return 5;
     }
-  } catch (e) {
-    print("Erro: $e");
-    return 5;
   }
 }
-}
-
