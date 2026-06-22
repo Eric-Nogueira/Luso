@@ -13,9 +13,9 @@ class Func {
     String confirmPassword,
   ) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/user/new');
 
-      if (email.isEmpty ||  
+      if (email.isEmpty ||
           name.isEmpty ||
           password.isEmpty ||
           confirmPassword.isEmpty) {
@@ -35,12 +35,9 @@ class Func {
           url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
-            'operation': 'newUser',
-            'data': {
-              'email': email,
-              'name': name,
-              'password': sha256.convert(utf8.encode(password)).toString(),
-            },
+            'email': email,
+            'name': name,
+            'password': sha256.convert(utf8.encode(password)).toString(),
           }),
         );
 
@@ -66,7 +63,7 @@ class Func {
 
   Future<int> login(String email, String password) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/user/login');
 
       if (email.isEmpty || password.isEmpty) {
         print('Todos os campos são obrigatórios');
@@ -79,11 +76,8 @@ class Func {
           url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
-            'operation': 'login',
-            'data': {
-              'email': email,
-              'password': sha256.convert(utf8.encode(password)).toString(),
-            },
+            'email': email,
+            'password': sha256.convert(utf8.encode(password)).toString(),
           }),
         );
 
@@ -110,7 +104,7 @@ class Func {
 
   Future<int> sendEmail(String email) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/user/code');
 
       if (email.isEmpty) {
         print("Insira um email");
@@ -122,10 +116,7 @@ class Func {
         final response = await http.post(
           url,
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'operation': 'sendEmail',
-            'data': {'email': email},
-          }),
+          body: jsonEncode({'email': email}),
         );
 
         print('POST ${url.toString()} -> ${response.statusCode}');
@@ -155,7 +146,7 @@ class Func {
 
   Future<int> checkCode(int code) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/User.php');
+      final url = Uri.parse('${dotenv.env['API_URL']!}/user/check');
       if (code.isNaN) {
         return 1;
       } else if (token == null || token!.isEmpty) {
@@ -165,10 +156,7 @@ class Func {
         final response = await http.post(
           url,
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'operation': 'checkCode',
-            'data': {'code': code.toString(), 'token': token},
-          }),
+          body: jsonEncode({'code': code.toString(), 'token': token}),
         );
 
         print('POST ${url.toString()} -> ${response.statusCode}');
