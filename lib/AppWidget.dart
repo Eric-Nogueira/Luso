@@ -6,6 +6,7 @@ import 'package:luso/pages/login/Login.dart';
 import 'package:luso/pages/login/forgetpassword/ForgetPassword.dart';
 import 'package:luso/pages/signin/SignIn.dart';
 import 'package:luso/pages/login/forgetpassword/SendEmail.dart';
+import 'package:luso/pages/special/Offline.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/send_email': (context) => const SendEmailPage(),
         '/forget_password': (context) => const ForgetPasswordPage(),
         '/signin': (context) => const SigninPage(),
+        '/offline': (context) => const OfflinePage(),
       },
     );
   }
