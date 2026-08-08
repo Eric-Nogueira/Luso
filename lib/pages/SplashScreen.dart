@@ -56,19 +56,44 @@ void initState() {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(255, 0, 87, 180),
-                  Color.fromARGB(255, 17, 0, 116),
-                ],
-              ),
+          Background(),
+          Content(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Image.asset(
+              'assets/img/MASCOTE_LUSO.png',
+              fit: BoxFit.fitWidth,
+              width: MediaQuery.of(context).size.width,
             ),
           ),
-          Center(
+        ],
+      ),
+    );
+  }
+}
+
+class Background extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.fromARGB(255, 0, 87, 180),
+            Color.fromARGB(255, 17, 0, 116),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Content extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -88,17 +113,6 @@ void initState() {
                 ),
               ],
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Image.asset(
-              'assets/img/MASCOTE_LUSO.png',
-              fit: BoxFit.fitWidth,
-              width: MediaQuery.of(context).size.width,
-            ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 }

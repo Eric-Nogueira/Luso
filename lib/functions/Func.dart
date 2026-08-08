@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -13,7 +12,7 @@ class Func {
     String confirmPassword,
   ) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/user/new');
+      final url = Uri.parse('https://luso-backend-api.onrender.com/user/new');
 
       if (email.isEmpty ||
           name.isEmpty ||
@@ -39,7 +38,10 @@ class Func {
             'name': name,
             'password': sha256.convert(utf8.encode(password)).toString(),
           }),
-        );
+        ).timeout(const Duration(seconds: 10), onTimeout: () {
+          print('Tempo limite de conexão atingido');
+          return http.Response('Tempo limite de conexão atingido', 408);
+        });
 
         print('POST ${url.toString()} -> ${response.statusCode}');
         print(response.body);
@@ -63,7 +65,7 @@ class Func {
 
   Future<int> login(String email, String password) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/user/login');
+      final url = Uri.parse('https://luso-backend-api.onrender.com/user/login');
 
       if (email.isEmpty || password.isEmpty) {
         print('Todos os campos são obrigatórios');
@@ -79,7 +81,10 @@ class Func {
             'email': email,
             'password': sha256.convert(utf8.encode(password)).toString(),
           }),
-        );
+        ).timeout(const Duration(seconds: 10), onTimeout: () {
+          print('Tempo limite de conexão atingido');
+          return http.Response('Tempo limite de conexão atingido', 408);
+        });
 
         print('POST ${url.toString()} -> ${response.statusCode}');
         print(response.body);
@@ -104,7 +109,7 @@ class Func {
 
   Future<int> sendEmail(String email) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/user/code');
+      final url = Uri.parse('https://luso-backend-api.onrender.com/user/code');
 
       if (email.isEmpty) {
         print("Insira um email");
@@ -117,7 +122,10 @@ class Func {
           url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({'email': email}),
-        );
+        ).timeout(const Duration(seconds: 10), onTimeout: () {
+          print('Tempo limite de conexão atingido');
+          return http.Response('Tempo limite de conexão atingido', 408);
+        });
 
         print('POST ${url.toString()} -> ${response.statusCode}');
         print(response.body);
@@ -146,7 +154,7 @@ class Func {
 
   Future<int> checkCode(int code) async {
     try {
-      final url = Uri.parse('${dotenv.env['API_URL']!}/user/check');
+      final url = Uri.parse('https://luso-backend-api.onrender.com/user/check');
       if (code.isNaN) {
         return 1;
       } else if (token == null || token!.isEmpty) {
@@ -157,7 +165,10 @@ class Func {
           url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({'code': code.toString(), 'token': token}),
-        );
+        ).timeout(const Duration(seconds: 10), onTimeout: () {
+          print('Tempo limite de conexão atingido');
+          return http.Response('Tempo limite de conexão atingido', 408);
+        });
 
         print('POST ${url.toString()} -> ${response.statusCode}');
         print(response.body);
