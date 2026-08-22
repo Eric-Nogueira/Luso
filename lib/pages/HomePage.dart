@@ -18,12 +18,28 @@ class _HomePageState extends State<HomePage> {
         children: [
           assets.background(),
           Center(
-            child: Text(
-              'Luso App',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            child: PageContent()
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+class PageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 28, 9, 74),
+        toolbarHeight: 130,
+        title: Image.asset(
+          'assets/img/logo/LOGO_LUSO_LIGHT.png',
+          fit: BoxFit.fitWidth,
+          width: 120,
+          alignment: AlignmentGeometry.center,
+        ),
       ),
     );
   }
