@@ -211,6 +211,7 @@ class PageContent extends StatelessWidget {
                           icon: Icons.school,
                           title: 'Fase Simples',
                           description: 'Gabarite o básico!',
+                          route: '/questions',
                           context: context,
                         ),
 
@@ -220,6 +221,7 @@ class PageContent extends StatelessWidget {
                           icon: Icons.menu_book,
                           title: 'Fase Média',
                           description: 'Aumente o seu nível!',
+                          route: '/questions',
                           context: context,
                         ),
 
@@ -229,6 +231,7 @@ class PageContent extends StatelessWidget {
                           icon: Icons.emoji_events,
                           title: 'Fase Difícil',
                           description: 'Mostre o que você sabe!',
+                          route: '/questions',
                           context: context,
                         ),
                       ],
