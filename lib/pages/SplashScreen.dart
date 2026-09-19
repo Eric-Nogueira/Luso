@@ -73,6 +73,8 @@ void initState() {
 }
 
 class Background extends StatelessWidget {
+  const Background({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -91,6 +93,8 @@ class Background extends StatelessWidget {
 }
 
 class Content extends StatelessWidget {
+  const Content({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
