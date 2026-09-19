@@ -4,7 +4,17 @@ import 'package:luso/pages/results/PerformancePage.dart';
 import 'package:luso/pages/results/PerfectResultPage.dart';
 
 class QuestionPage extends StatefulWidget {
-  const QuestionPage({super.key});
+  // Questão em que a página deve começar.
+  final int initialQuestion;
+
+  // Indica se a página foi aberta para revisão.
+  final bool reviewMode;
+
+  const QuestionPage({
+    super.key,
+    this.initialQuestion = 1,
+    this.reviewMode = false,
+  });
 
   @override
   State<QuestionPage> createState() => _QuestionPageState();
@@ -15,7 +25,7 @@ class _QuestionPageState extends State<QuestionPage> {
   // CONFIGURAÇÕES DA PROVA
   // ============================================================
 
-  int currentQuestion = 1;
+  late int currentQuestion;
 
   final int totalQuestions = 10;
 
@@ -28,23 +38,20 @@ class _QuestionPageState extends State<QuestionPage> {
   final List<String> contentsToReview = [];
 
   // Respostas corretas para cada questão.
-  //
   final Map<int, String> correctAnswers = {
     1: 'A',
     2: 'B',
     3: 'C',
     4: 'D',
-    5: 'A',
+    5: 'E',
     6: 'B',
     7: 'C',
-    8: 'D',
+    8: 'E',
     9: 'A',
     10: 'B',
   };
 
   // Conteúdo relacionado a cada questão.
-  //
-  // Isso também poderá futuramente vir da API.
   final Map<int, String> questionContents = {
     1: 'Função afim',
     2: 'Porcentagem',
@@ -59,6 +66,14 @@ class _QuestionPageState extends State<QuestionPage> {
   };
 
   @override
+  void initState() {
+    super.initState();
+
+    // Começa na questão enviada.
+    currentQuestion = widget.initialQuestion;
+  }
+
+  @override
   Widget build(BuildContext context) {
     double progress = currentQuestion / totalQuestions;
 
@@ -68,7 +83,6 @@ class _QuestionPageState extends State<QuestionPage> {
       body: SafeArea(
         child: Column(
           children: [
-
             // ====================================================
             // CABEÇALHO
             // ====================================================
@@ -90,7 +104,6 @@ class _QuestionPageState extends State<QuestionPage> {
 
               child: Row(
                 children: [
-
                   // BOTÃO VOLTAR
                   IconButton(
                     onPressed: () {
@@ -149,7 +162,6 @@ class _QuestionPageState extends State<QuestionPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-
                         // =================================================
                         // QUESTÃO X DE 10
                         // =================================================
@@ -179,7 +191,8 @@ class _QuestionPageState extends State<QuestionPage> {
 
                             minHeight: 10,
 
-                            backgroundColor: const Color(0xFFE6E8F0),
+                            backgroundColor:
+                                const Color(0xFFE6E8F0),
 
                             valueColor:
                                 const AlwaysStoppedAnimation<Color>(
@@ -215,7 +228,6 @@ class _QuestionPageState extends State<QuestionPage> {
                                 CrossAxisAlignment.start,
 
                             children: [
-
                               const Text(
                                 'Enunciado',
 
@@ -271,10 +283,15 @@ class _QuestionPageState extends State<QuestionPage> {
                           text: 'Alternativa D',
                         ),
 
+                        answerButton(
+                          letter: 'E',
+                          text: 'Alternativa E',
+                        ),
+
                         const SizedBox(height: 25),
 
                         // =================================================
-                        // BOTÃO PRÓXIMA QUESTÃO
+                        // BOTÃO
                         // =================================================
 
                         SizedBox(
@@ -299,9 +316,12 @@ class _QuestionPageState extends State<QuestionPage> {
                             ),
 
                             child: Text(
-                              currentQuestion == totalQuestions
-                                  ? 'Finalizar'
-                                  : 'Próxima questão',
+                              widget.reviewMode
+                                  ? 'Voltar ao desempenho'
+                                  : currentQuestion ==
+                                          totalQuestions
+                                      ? 'Finalizar'
+                                      : 'Próxima questão',
 
                               style: const TextStyle(
                                 fontFamily: 'Inter',
@@ -368,7 +388,6 @@ class _QuestionPageState extends State<QuestionPage> {
 
         child: Row(
           children: [
-
             // CÍRCULO
             Container(
               width: 30,
@@ -438,9 +457,59 @@ class _QuestionPageState extends State<QuestionPage> {
   // ==============================================================
 
   void nextQuestion() {
+    // ------------------------------------------------------------
+    // MODO REVISÃO
+    // ------------------------------------------------------------
+
+    if (widget.reviewMode) {
+      if (selectedAnswer == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Selecione uma alternativa antes de voltar.',
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      String? correctAnswer =
+          correctAnswers[currentQuestion];
+
+      if (selectedAnswer == correctAnswer) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Você acertou a questão na revisão!',
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'A resposta correta é $correctAnswer.',
+            ),
+          ),
+        );
+      }
+
+      // Depois de responder, volta para a tela de desempenho.
+      Future.delayed(
+        const Duration(milliseconds: 700),
+        () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        },
+      );
+
+      return;
+    }
 
     // ------------------------------------------------------------
-    // Verifica se o usuário selecionou alguma alternativa
+    // MODO NORMAL
     // ------------------------------------------------------------
 
     if (selectedAnswer == null) {
@@ -463,9 +532,10 @@ class _QuestionPageState extends State<QuestionPage> {
         correctAnswers[currentQuestion];
 
     if (selectedAnswer != correctAnswer) {
-
-      // Adiciona a questão à lista de erros.
-      wrongQuestions.add(currentQuestion);
+      // Evita adicionar a mesma questão duas vezes.
+      if (!wrongQuestions.contains(currentQuestion)) {
+        wrongQuestions.add(currentQuestion);
+      }
 
       // Pega o conteúdo relacionado à questão.
       String? content =
@@ -473,7 +543,6 @@ class _QuestionPageState extends State<QuestionPage> {
 
       if (content != null &&
           !contentsToReview.contains(content)) {
-
         contentsToReview.add(content);
       }
     }
@@ -483,10 +552,8 @@ class _QuestionPageState extends State<QuestionPage> {
     // ------------------------------------------------------------
 
     if (currentQuestion < totalQuestions) {
-
       setState(() {
         currentQuestion++;
-
         selectedAnswer = null;
       });
 
@@ -505,16 +572,13 @@ class _QuestionPageState extends State<QuestionPage> {
   // ==============================================================
 
   void finishQuiz() {
-
     // ------------------------------------------------------------
     // USUÁRIO ACERTOU TODAS
     // ------------------------------------------------------------
 
     if (wrongQuestions.isEmpty) {
-
       Navigator.pushReplacement(
         context,
-
         MaterialPageRoute(
           builder: (context) => const PerfectResultPage(),
         ),
@@ -528,15 +592,16 @@ class _QuestionPageState extends State<QuestionPage> {
     // ------------------------------------------------------------
 
     Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (context) => PerformancePage(
-      correctAnswers: totalQuestions - wrongQuestions.length,
-      totalQuestions: totalQuestions,
-      wrongQuestions: wrongQuestions,
-      reviewTopics: contentsToReview,
-    ),
-  ),
-);
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerformancePage(
+          correctAnswers:
+              totalQuestions - wrongQuestions.length,
+          totalQuestions: totalQuestions,
+          wrongQuestions: wrongQuestions,
+          reviewTopics: contentsToReview,
+        ),
+      ),
+    );
   }
 }

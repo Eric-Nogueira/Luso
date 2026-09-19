@@ -30,7 +30,25 @@ class MyApp extends StatelessWidget {
         '/forget_password': (context) => const ForgetPasswordPage(),
         '/signin': (context) => const SigninPage(),
         '/offline': (context) => const OfflinePage(),
-        '/questions': (context) => const QuestionPage(),
+        '/questions': (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+
+         int initialQuestion = 1;
+         bool reviewMode = false;
+
+         if (args is Map) {
+          initialQuestion =
+          args['initialQuestion'] ?? 1;
+
+          reviewMode =
+            args['reviewMode'] ?? false;
+  }
+
+  return QuestionPage(
+    initialQuestion: initialQuestion,
+    reviewMode: reviewMode,
+  );
+},
       },
     );
   }

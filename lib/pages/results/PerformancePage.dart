@@ -16,8 +16,11 @@ class PerformancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double percentage = correctAnswers / totalQuestions;
-    final int errors = totalQuestions - correctAnswers;
+    final double percentage =
+        correctAnswers / totalQuestions;
+
+    final int errors =
+        totalQuestions - correctAnswers;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
@@ -32,11 +35,14 @@ class PerformancePage extends StatelessWidget {
             Container(
               width: double.infinity,
               height: 120,
+
               padding: const EdgeInsets.symmetric(
                 horizontal: 25,
               ),
+
               decoration: const BoxDecoration(
                 color: Color(0xFF10279A),
+
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(28),
                   bottomRight: Radius.circular(28),
@@ -55,6 +61,7 @@ class PerformancePage extends StatelessWidget {
 
                   const Text(
                     'Seu desempenho',
+
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 21,
@@ -109,12 +116,15 @@ class PerformancePage extends StatelessWidget {
                                     width: 150,
                                     height: 150,
 
-                                    child: CircularProgressIndicator(
+                                    child:
+                                        CircularProgressIndicator(
                                       value: percentage,
                                       strokeWidth: 10,
 
                                       backgroundColor:
-                                          const Color(0xFFE7EAF7),
+                                          const Color(
+                                        0xFFE7EAF7,
+                                      ),
 
                                       valueColor:
                                           const AlwaysStoppedAnimation(
@@ -124,26 +134,35 @@ class PerformancePage extends StatelessWidget {
                                   ),
 
                                   Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisSize:
+                                        MainAxisSize.min,
 
                                     children: [
                                       Text(
                                         '$correctAnswers/$totalQuestions',
-                                        style: const TextStyle(
+
+                                        style:
+                                            const TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 32,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF10279A),
+                                          fontWeight:
+                                              FontWeight.bold,
+                                          color:
+                                              Color(0xFF10279A),
                                         ),
                                       ),
 
                                       const Text(
                                         'acertos',
-                                        style: TextStyle(
+
+                                        style:
+                                            TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF10279A),
+                                          fontWeight:
+                                              FontWeight.bold,
+                                          color:
+                                              Color(0xFF10279A),
                                         ),
                                       ),
                                     ],
@@ -160,11 +179,14 @@ class PerformancePage extends StatelessWidget {
                               children: [
                                 const Text(
                                   'Erros',
+
                                   style: TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF222222),
+                                    fontWeight:
+                                        FontWeight.bold,
+                                    color:
+                                        Color(0xFF222222),
                                   ),
                                 ),
 
@@ -184,14 +206,17 @@ class PerformancePage extends StatelessWidget {
                                         width: 20,
                                         height: 20,
 
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
+                                        decoration:
+                                            BoxDecoration(
+                                          shape:
+                                              BoxShape.circle,
 
                                           color: isError
                                               ? Colors.red
                                               : Colors.white,
 
-                                          border: Border.all(
+                                          border:
+                                              Border.all(
                                             color: isError
                                                 ? Colors.red
                                                 : const Color(
@@ -222,11 +247,14 @@ class PerformancePage extends StatelessWidget {
                             children: [
                               const Text(
                                 'Questões erradas',
+
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF222222),
+                                  fontWeight:
+                                      FontWeight.bold,
+                                  color:
+                                      Color(0xFF222222),
                                 ),
                               ),
 
@@ -236,22 +264,30 @@ class PerformancePage extends StatelessWidget {
                                 (questionNumber) {
                                   return InkWell(
                                     borderRadius:
-                                        BorderRadius.circular(12),
+                                        BorderRadius.circular(
+                                      12,
+                                    ),
+
+                                    // ==================================================
+                                    // ABRIR A QUESTÃO ERRADA
+                                    // ==================================================
 
                                     onTap: () {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Revisão da questão $questionNumber',
-                                          ),
-                                        ),
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/questions',
+                                        arguments: {
+                                          'initialQuestion':
+                                              questionNumber,
+                                          'reviewMode': true,
+                                        },
                                       );
                                     },
 
                                     child: Padding(
                                       padding:
-                                          const EdgeInsets.symmetric(
+                                          const EdgeInsets
+                                              .symmetric(
                                         vertical: 10,
                                       ),
 
@@ -263,24 +299,32 @@ class PerformancePage extends StatelessWidget {
 
                                             decoration:
                                                 const BoxDecoration(
-                                              shape: BoxShape.circle,
+                                              shape:
+                                                  BoxShape.circle,
                                               color: Colors.red,
                                             ),
 
-                                            child: const Icon(
+                                            child:
+                                                const Icon(
                                               Icons.close,
-                                              color: Colors.white,
+                                              color:
+                                                  Colors.white,
                                               size: 17,
                                             ),
                                           ),
 
-                                          const SizedBox(width: 15),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
 
                                           Expanded(
                                             child: Text(
                                               'Questão $questionNumber',
-                                              style: const TextStyle(
-                                                fontFamily: 'Inter',
+
+                                              style:
+                                                  const TextStyle(
+                                                fontFamily:
+                                                    'Inter',
                                                 fontSize: 16,
                                                 fontWeight:
                                                     FontWeight.w500,
@@ -290,7 +334,8 @@ class PerformancePage extends StatelessWidget {
 
                                           const Icon(
                                             Icons.chevron_right,
-                                            color: Color(0xFF10279A),
+                                            color:
+                                                Color(0xFF10279A),
                                           ),
                                         ],
                                       ),
@@ -316,10 +361,12 @@ class PerformancePage extends StatelessWidget {
                             children: [
                               const Text(
                                 'Conteúdos para revisar',
+
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight:
+                                      FontWeight.bold,
                                 ),
                               ),
 
@@ -329,18 +376,23 @@ class PerformancePage extends StatelessWidget {
                                 (topic) {
                                   return Padding(
                                     padding:
-                                        const EdgeInsets.symmetric(
+                                        const EdgeInsets
+                                            .symmetric(
                                       vertical: 7,
                                     ),
 
                                     child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment
+                                              .start,
 
                                       children: [
                                         const Padding(
                                           padding:
-                                              EdgeInsets.only(top: 5),
+                                              EdgeInsets.only(
+                                            top: 5,
+                                          ),
+
                                           child: Icon(
                                             Icons.circle,
                                             size: 7,
@@ -349,16 +401,23 @@ class PerformancePage extends StatelessWidget {
                                           ),
                                         ),
 
-                                        const SizedBox(width: 10),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
 
                                         Expanded(
                                           child: Text(
                                             topic,
-                                            style: const TextStyle(
-                                              fontFamily: 'Inter',
+
+                                            style:
+                                                const TextStyle(
+                                              fontFamily:
+                                                  'Inter',
                                               fontSize: 15,
                                               color:
-                                                  Color(0xFF333333),
+                                                  Color(
+                                                0xFF333333,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -383,24 +442,31 @@ class PerformancePage extends StatelessWidget {
 
                           child: ElevatedButton(
                             onPressed: () {
-                              // Temporariamente volta para a tela
-                              // de questões.
-                              // Depois podemos criar um modo
-                              // "revisão" que mostra só as erradas.
+                              if (wrongQuestions.isEmpty) {
+                                return;
+                              }
 
                               Navigator.pushNamed(
                                 context,
                                 '/questions',
+                                arguments: {
+                                  'initialQuestion':
+                                      wrongQuestions.first,
+                                  'reviewMode': true,
+                                },
                               );
                             },
 
-                            style: ElevatedButton.styleFrom(
+                            style:
+                                ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color(0xFF10279A),
 
-                              foregroundColor: Colors.white,
+                              foregroundColor:
+                                  Colors.white,
 
-                              shape: RoundedRectangleBorder(
+                              shape:
+                                  RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(20),
                               ),
@@ -410,10 +476,12 @@ class PerformancePage extends StatelessWidget {
 
                             child: const Text(
                               'Revisar questões',
+
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontWeight:
+                                    FontWeight.bold,
                               ),
                             ),
                           ),
@@ -431,14 +499,16 @@ class PerformancePage extends StatelessWidget {
 
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.pushNamedAndRemoveUntil(
+                              Navigator
+                                  .pushNamedAndRemoveUntil(
                                 context,
                                 '/home',
                                 (route) => false,
                               );
                             },
 
-                            style: OutlinedButton.styleFrom(
+                            style:
+                                OutlinedButton.styleFrom(
                               foregroundColor:
                                   const Color(0xFF10279A),
 
@@ -447,7 +517,8 @@ class PerformancePage extends StatelessWidget {
                                 width: 1.5,
                               ),
 
-                              shape: RoundedRectangleBorder(
+                              shape:
+                                  RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(20),
                               ),
@@ -455,10 +526,12 @@ class PerformancePage extends StatelessWidget {
 
                             child: const Text(
                               'Voltar ao início',
+
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontWeight:
+                                    FontWeight.bold,
                               ),
                             ),
                           ),
@@ -475,15 +548,21 @@ class PerformancePage extends StatelessWidget {
     );
   }
 
+  // ==============================================================
+  // CARD DAS SEÇÕES
+  // ==============================================================
+
   Widget _sectionCard({
     required Widget child,
   }) {
     return Container(
       width: double.infinity,
+
       padding: const EdgeInsets.all(22),
 
       decoration: BoxDecoration(
         color: Colors.white,
+
         borderRadius: BorderRadius.circular(22),
 
         border: Border.all(
