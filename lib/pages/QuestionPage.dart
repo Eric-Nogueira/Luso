@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luso/functions/Func.dart';
 
 import 'package:luso/pages/results/PerformancePage.dart';
 import 'package:luso/pages/results/PerfectResultPage.dart';
@@ -29,7 +30,7 @@ class _QuestionPageState extends State<QuestionPage> {
 
   final int totalQuestions = 10;
 
-  String? selectedAnswer;
+  int? selectedAnswer;
 
   // Guarda as questões que o usuário errou.
   final List<int> wrongQuestions = [];
@@ -75,6 +76,9 @@ class _QuestionPageState extends State<QuestionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    final fase = args['fase'] as int;
+    getQuestionsForFase(fase);
     double progress = currentQuestion / totalQuestions;
 
     return Scaffold(
@@ -353,10 +357,18 @@ class _QuestionPageState extends State<QuestionPage> {
   }) {
     bool isSelected = selectedAnswer == letter;
 
+    const cases = {
+    'A': 1,
+    'B': 2,
+    'C': 3,
+    'D': 4,
+    'E': 5
+  };
+
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedAnswer = letter;
+          selectedAnswer = cases[letter];
         });
       },
 
@@ -603,5 +615,9 @@ class _QuestionPageState extends State<QuestionPage> {
         ),
       ),
     );
+  }
+
+  Future<void> getQuestionsForFase(int fase) async {
+    await Func.getQuestionsForFase(fase);
   }
 }

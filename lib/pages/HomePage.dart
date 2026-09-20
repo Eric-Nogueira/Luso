@@ -212,6 +212,7 @@ class PageContent extends StatelessWidget {
                           title: 'Fase Simples',
                           description: 'Gabarite o básico!',
                           route: '/questions',
+                          arguments: {'fase': 1},
                           context: context,
                         ),
 
@@ -222,6 +223,7 @@ class PageContent extends StatelessWidget {
                           title: 'Fase Média',
                           description: 'Aumente o seu nível!',
                           route: '/questions',
+                          arguments: {'fase': 2},
                           context: context,
                         ),
 
@@ -232,6 +234,7 @@ class PageContent extends StatelessWidget {
                           title: 'Fase Difícil',
                           description: 'Mostre o que você sabe!',
                           route: '/questions',
+                          arguments: {'fase': 3},
                           context: context,
                         ),
                       ],

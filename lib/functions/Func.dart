@@ -195,4 +195,43 @@ class Func {
       return 5;
     }
   }
+
+  static Future<Map<String, dynamic>?> getQuestionsForFase(int fase) async {
+  try {
+    final url = Uri.parse('https://luso-backend-api.onrender.com/questions/fase');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'fase': fase,
+      }),
+    ).timeout(const Duration(seconds: 10), onTimeout: () {
+      print('Tempo limite de conexão atingido');
+      return http.Response('Tempo limite de conexão atingido', 408);
+    });
+
+    print('POST ${url.toString()} -> ${response.statusCode}');
+    print(response.body);
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      print('Erro ao obter perguntas para a fase $fase');
+      return null;
+    }
+
+    final responseData = jsonDecode(response.body);
+    if (responseData['status'] == 'success') {
+      print('Perguntas para a fase $fase obtidas com sucesso');
+      return responseData;
+    } else {
+      print('Erro ao obter perguntas para a fase $fase');
+      return null;
+    }
+  } catch (e) {
+    print("Erro: $e");
+    return null;
+  }
+}
 }

@@ -89,6 +89,7 @@ class Assets {
     required String title,
     required String description,
     String? route,
+    Map<String, dynamic>? arguments,
     required BuildContext context,
   }) {
     return Container(
@@ -114,7 +115,7 @@ class Assets {
           onTap: route == null
               ? null
               : () {
-                  Navigator.pushNamed(context, route);
+                  Navigator.pushNamed(context, route, arguments: arguments);
                 },
 
           child: Padding(
