@@ -38,33 +38,21 @@ class _QuestionPageState extends State<QuestionPage> {
   // Guarda os conteúdos relacionados aos erros.
   final List<String> contentsToReview = [];
 
-  // Respostas corretas para cada questão.
-  final Map<int, String> correctAnswers = {
-    1: 'A',
-    2: 'B',
-    3: 'C',
-    4: 'D',
-    5: 'E',
-    6: 'B',
-    7: 'C',
-    8: 'E',
-    9: 'A',
-    10: 'B',
-  };
+  // ============================================================
+  // DADOS VINDOS DA API
+  // ============================================================
 
-  // Conteúdo relacionado a cada questão.
-  final Map<int, String> questionContents = {
-    1: 'Função afim',
-    2: 'Porcentagem',
-    3: 'Interpretação de gráficos',
-    4: 'Função afim',
-    5: 'Porcentagem',
-    6: 'Geometria',
-    7: 'Interpretação de gráficos',
-    8: 'Probabilidade',
-    9: 'Função afim',
-    10: 'Porcentagem',
-  };
+  int _fase = 1;
+  bool _carregando = true;
+
+  String _enunciado = '';
+  List<String?> _alternativas = [];
+  int _alternativaCorreta = 1; // índice 1..5 (índice 0 é null na API)
+  String _assunto = '';
+
+  // ============================================================
+  // CICLO DE VIDA
+  // ============================================================
 
   @override
   void initState() {
@@ -72,13 +60,65 @@ class _QuestionPageState extends State<QuestionPage> {
 
     // Começa na questão enviada.
     currentQuestion = widget.initialQuestion;
+
+    // Lê os argumentos da rota e carrega a questão.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map?;
+
+      _fase = (args?['fase'] as int?) ?? 1;
+
+      _carregarQuestao();
+    });
   }
+
+  Future<void> _carregarQuestao() async {
+    setState(() => _carregando = true);
+
+    final dados = await Func.getQuestionsForFase(_fase);
+
+    if (!mounted) return;
+
+    if (dados == null || dados['status'] != 'success') {
+      setState(() => _carregando = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao carregar questão'),
+        ),
+      );
+      return;
+    }
+
+    final q = dados['question'] as Map<String, dynamic>;
+
+    setState(() {
+      _enunciado = q['enunciado'] as String? ?? '';
+      _alternativas = List<String?>.from(q['alternativas'] as List);
+      _alternativaCorreta = q['alternativa_correta'] as int? ?? 1;
+      _assunto = q['assuntos'] as String? ?? '';
+      _carregando = false;
+    });
+  }
+
+  // ============================================================
+  // BUILD
+  // ============================================================
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    final fase = args['fase'] as int;
-    getQuestionsForFase(fase);
+    // Enquanto carrega a API, mostra spinner.
+    if (_carregando) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF1735B4),
+          ),
+        ),
+      );
+    }
+
     double progress = currentQuestion / totalQuestions;
 
     return Scaffold(
@@ -246,9 +286,9 @@ class _QuestionPageState extends State<QuestionPage> {
                               const SizedBox(height: 16),
 
                               Text(
-                                'Aqui ficará o enunciado da questão '
-                                'do ENEM. Depois essa informação será '
-                                'carregada através da API do sistema.',
+                                _enunciado.isEmpty
+                                    ? 'Carregando...'
+                                    : _enunciado,
 
                                 style: const TextStyle(
                                   fontFamily: 'Inter',
@@ -267,30 +307,26 @@ class _QuestionPageState extends State<QuestionPage> {
                         // ALTERNATIVAS
                         // =================================================
 
-                        answerButton(
-                          letter: 'A',
-                          text: 'Alternativa A',
-                        ),
+                        ...List.generate(5, (i) {
+                          const letras = ['A', 'B', 'C', 'D', 'E'];
 
-                        answerButton(
-                          letter: 'B',
-                          text: 'Alternativa B',
-                        ),
+                          // A API começa no índice 1 (índice 0 é null).
+                          final idxApi = i + 1;
 
-                        answerButton(
-                          letter: 'C',
-                          text: 'Alternativa C',
-                        ),
+                          final texto = idxApi < _alternativas.length
+                              ? (_alternativas[idxApi] ?? '')
+                              : '';
 
-                        answerButton(
-                          letter: 'D',
-                          text: 'Alternativa D',
-                        ),
+                          if (texto.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
 
-                        answerButton(
-                          letter: 'E',
-                          text: 'Alternativa E',
-                        ),
+                          return answerButton(
+                            letter: letras[i],
+                            text: texto,
+                            index: idxApi,
+                          );
+                        }),
 
                         const SizedBox(height: 25),
 
@@ -354,21 +390,14 @@ class _QuestionPageState extends State<QuestionPage> {
   Widget answerButton({
     required String letter,
     required String text,
+    required int index,
   }) {
-    bool isSelected = selectedAnswer == letter;
-
-    const cases = {
-    'A': 1,
-    'B': 2,
-    'C': 3,
-    'D': 4,
-    'E': 5
-  };
+    bool isSelected = selectedAnswer == index;
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedAnswer = cases[letter];
+          selectedAnswer = index;
         });
       },
 
@@ -486,8 +515,7 @@ class _QuestionPageState extends State<QuestionPage> {
         return;
       }
 
-      String? correctAnswer =
-          correctAnswers[currentQuestion];
+      final int correctAnswer = _alternativaCorreta;
 
       if (selectedAnswer == correctAnswer) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -501,13 +529,12 @@ class _QuestionPageState extends State<QuestionPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'A resposta correta é $correctAnswer.',
+              'A resposta correta é ${_letraDaAlternativa(correctAnswer)}.',
             ),
           ),
         );
       }
 
-      // Depois de responder, volta para a tela de desempenho.
       Future.delayed(
         const Duration(milliseconds: 700),
         () {
@@ -540,8 +567,7 @@ class _QuestionPageState extends State<QuestionPage> {
     // VERIFICA SE A RESPOSTA ESTÁ CORRETA
     // ------------------------------------------------------------
 
-    String? correctAnswer =
-        correctAnswers[currentQuestion];
+    final int correctAnswer = _alternativaCorreta;
 
     if (selectedAnswer != correctAnswer) {
       // Evita adicionar a mesma questão duas vezes.
@@ -550,12 +576,9 @@ class _QuestionPageState extends State<QuestionPage> {
       }
 
       // Pega o conteúdo relacionado à questão.
-      String? content =
-          questionContents[currentQuestion];
-
-      if (content != null &&
-          !contentsToReview.contains(content)) {
-        contentsToReview.add(content);
+      if (_assunto.isNotEmpty &&
+          !contentsToReview.contains(_assunto)) {
+        contentsToReview.add(_assunto);
       }
     }
 
@@ -568,6 +591,7 @@ class _QuestionPageState extends State<QuestionPage> {
         currentQuestion++;
         selectedAnswer = null;
       });
+      _carregarQuestao();
 
       return;
     }
@@ -617,7 +641,14 @@ class _QuestionPageState extends State<QuestionPage> {
     );
   }
 
-  Future<void> getQuestionsForFase(int fase) async {
-    await Func.getQuestionsForFase(fase);
+  // ==============================================================
+  // HELPERS
+  // ==============================================================
+
+  String _letraDaAlternativa(int index) {
+    const letras = ['A', 'B', 'C', 'D', 'E'];
+    final i = index - 1;
+    if (i < 0 || i >= letras.length) return '?';
+    return letras[i];
   }
 }
