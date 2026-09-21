@@ -5,6 +5,7 @@ class PerformancePage extends StatelessWidget {
   final int totalQuestions;
   final List<int> wrongQuestions;
   final List<String> reviewTopics;
+  final int fase;
 
   const PerformancePage({
     super.key,
@@ -12,6 +13,7 @@ class PerformancePage extends StatelessWidget {
     required this.totalQuestions,
     required this.wrongQuestions,
     required this.reviewTopics,
+    required this.fase,
   });
 
   @override
@@ -280,6 +282,7 @@ class PerformancePage extends StatelessWidget {
                                           'initialQuestion':
                                               questionNumber,
                                           'reviewMode': true,
+                                          'fase': fase,
                                         },
                                       );
                                     },

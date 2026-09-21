@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:luso/pages/results/PerformancePage.dart';
+import 'package:luso/pages/results/PerfectResultPage.dart';
 import 'pages/PresentationPage.dart';
 import 'package:luso/pages/HomePage.dart';
 import 'package:luso/pages/SplashScreen.dart';
@@ -49,6 +51,22 @@ class MyApp extends StatelessWidget {
     reviewMode: reviewMode,
   );
 },
+        '/perfect_result': (context) => const PerfectResultPage(),
+
+        '/performance': (context) {
+          final args =
+            ModalRoute.of(context)?.settings.arguments as Map;
+
+          return PerformancePage(
+            correctAnswers: args['correctAnswers'],
+            totalQuestions: args['totalQuestions'],
+            wrongQuestions:
+              List<int>.from(args['wrongQuestions']),
+            reviewTopics:
+              List<String>.from(args['reviewTopics']),
+            fase: args['fase'],
+          );
+        },
       },
     );
   }

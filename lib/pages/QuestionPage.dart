@@ -613,11 +613,9 @@ class _QuestionPageState extends State<QuestionPage> {
     // ------------------------------------------------------------
 
     if (wrongQuestions.isEmpty) {
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => const PerfectResultPage(),
-        ),
+        '/perfect_result',
       );
 
       return;
@@ -627,17 +625,17 @@ class _QuestionPageState extends State<QuestionPage> {
     // USUÁRIO ERROU ALGUMA QUESTÃO
     // ------------------------------------------------------------
 
-    Navigator.pushReplacement(
+    Navigator.pushReplacementNamed(
       context,
-      MaterialPageRoute(
-        builder: (context) => PerformancePage(
-          correctAnswers:
-              totalQuestions - wrongQuestions.length,
-          totalQuestions: totalQuestions,
-          wrongQuestions: wrongQuestions,
-          reviewTopics: contentsToReview,
-        ),
-      ),
+      '/performance',
+      arguments: {
+        'correctAnswers':
+          totalQuestions - wrongQuestions.length,
+        'totalQuestions': totalQuestions,
+        'wrongQuestions': wrongQuestions,
+        'reviewTopics': contentsToReview,
+        'fase': _fase,
+      },
     );
   }
 
