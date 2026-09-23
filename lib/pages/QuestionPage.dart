@@ -32,6 +32,12 @@ class _QuestionPageState extends State<QuestionPage> {
 
   int? selectedAnswer;
 
+  // IDs das questões já sorteadas nesta rodada (não podem repetir).
+  final List<String> _usedQuestionIds = [];
+
+  // ID da questão atualmente exibida.
+  String? _currentQuestionId;
+
   // Guarda as questões que o usuário errou.
   final List<int> wrongQuestions = [];
 
@@ -57,17 +63,17 @@ class _QuestionPageState extends State<QuestionPage> {
   @override
   void initState() {
     super.initState();
-
-    // Começa na questão enviada.
     currentQuestion = widget.initialQuestion;
 
-    // Lê os argumentos da rota e carrega a questão.
+    // Se for início de rodada, começa com histórico vazio.
+    if (widget.initialQuestion == 1 && !widget.reviewMode) {
+      _usedQuestionIds.clear();
+      _currentQuestionId = null;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args =
-          ModalRoute.of(context)?.settings.arguments as Map?;
-
+      final args = ModalRoute.of(context)?.settings.arguments as Map?;
       _fase = (args?['fase'] as int?) ?? 1;
-
       _carregarQuestao();
     });
   }
@@ -75,22 +81,29 @@ class _QuestionPageState extends State<QuestionPage> {
   Future<void> _carregarQuestao() async {
     setState(() => _carregando = true);
 
-    final dados = await Func.getQuestionsForFase(_fase);
+    final dados = await Func.getQuestionsForFase(
+      _fase,
+      exclude: _usedQuestionIds, // <<< passa as já usadas
+    );
 
     if (!mounted) return;
 
     if (dados == null || dados['status'] != 'success') {
       setState(() => _carregando = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro ao carregar questão'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erro ao carregar questão')));
       return;
     }
 
     final q = dados['question'] as Map<String, dynamic>;
+    final id = dados['id']?.toString();
+
+    // Guarda o ID da questão atual para poder excluí-la na próxima.
+    if (id != null && id.isNotEmpty) {
+      _currentQuestionId = id;
+    }
 
     setState(() {
       _enunciado = q['enunciado'] as String? ?? '';
@@ -112,9 +125,7 @@ class _QuestionPageState extends State<QuestionPage> {
       return const Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF1735B4),
-          ),
+          child: CircularProgressIndicator(color: Color(0xFF1735B4)),
         ),
       );
     }
@@ -130,7 +141,6 @@ class _QuestionPageState extends State<QuestionPage> {
             // ====================================================
             // CABEÇALHO
             // ====================================================
-
             Container(
               width: double.infinity,
               height: 120,
@@ -186,21 +196,13 @@ class _QuestionPageState extends State<QuestionPage> {
             // ====================================================
             // CONTEÚDO
             // ====================================================
-
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  24,
-                  25,
-                  24,
-                  30,
-                ),
+                padding: const EdgeInsets.fromLTRB(24, 25, 24, 30),
 
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: 700,
-                    ),
+                    constraints: const BoxConstraints(maxWidth: 700),
 
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +211,6 @@ class _QuestionPageState extends State<QuestionPage> {
                         // =================================================
                         // QUESTÃO X DE 10
                         // =================================================
-
                         Text(
                           'Questão $currentQuestion de $totalQuestions',
 
@@ -226,7 +227,6 @@ class _QuestionPageState extends State<QuestionPage> {
                         // =================================================
                         // BARRA DE PROGRESSO
                         // =================================================
-
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
 
@@ -235,11 +235,9 @@ class _QuestionPageState extends State<QuestionPage> {
 
                             minHeight: 10,
 
-                            backgroundColor:
-                                const Color(0xFFE6E8F0),
+                            backgroundColor: const Color(0xFFE6E8F0),
 
-                            valueColor:
-                                const AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               Color(0xFF1735B4),
                             ),
                           ),
@@ -250,7 +248,6 @@ class _QuestionPageState extends State<QuestionPage> {
                         // =================================================
                         // ENUNCIADO
                         // =================================================
-
                         Container(
                           width: double.infinity,
 
@@ -259,17 +256,13 @@ class _QuestionPageState extends State<QuestionPage> {
                           decoration: BoxDecoration(
                             color: Colors.white,
 
-                            borderRadius:
-                                BorderRadius.circular(22),
+                            borderRadius: BorderRadius.circular(22),
 
-                            border: Border.all(
-                              color: const Color(0xFFE2E2E2),
-                            ),
+                            border: Border.all(color: const Color(0xFFE2E2E2)),
                           ),
 
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
                             children: [
                               const Text(
@@ -306,7 +299,6 @@ class _QuestionPageState extends State<QuestionPage> {
                         // =================================================
                         // ALTERNATIVAS
                         // =================================================
-
                         ...List.generate(5, (i) {
                           const letras = ['A', 'B', 'C', 'D', 'E'];
 
@@ -333,7 +325,6 @@ class _QuestionPageState extends State<QuestionPage> {
                         // =================================================
                         // BOTÃO
                         // =================================================
-
                         SizedBox(
                           width: double.infinity,
                           height: 58,
@@ -342,14 +333,12 @@ class _QuestionPageState extends State<QuestionPage> {
                             onPressed: nextQuestion,
 
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xFF1735B4),
+                              backgroundColor: const Color(0xFF1735B4),
 
                               foregroundColor: Colors.white,
 
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(22),
+                                borderRadius: BorderRadius.circular(22),
                               ),
 
                               elevation: 0,
@@ -358,10 +347,9 @@ class _QuestionPageState extends State<QuestionPage> {
                             child: Text(
                               widget.reviewMode
                                   ? 'Voltar ao desempenho'
-                                  : currentQuestion ==
-                                          totalQuestions
-                                      ? 'Finalizar'
-                                      : 'Próxima questão',
+                                  : currentQuestion == totalQuestions
+                                  ? 'Finalizar'
+                                  : 'Próxima questão',
 
                               style: const TextStyle(
                                 fontFamily: 'Inter',
@@ -406,15 +394,10 @@ class _QuestionPageState extends State<QuestionPage> {
 
         margin: const EdgeInsets.only(bottom: 12),
 
-        padding: const EdgeInsets.symmetric(
-          horizontal: 18,
-          vertical: 18,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
 
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFFE9EEFF)
-              : Colors.white,
+          color: isSelected ? const Color(0xFFE9EEFF) : Colors.white,
 
           borderRadius: BorderRadius.circular(20),
 
@@ -437,9 +420,7 @@ class _QuestionPageState extends State<QuestionPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
 
-                color: isSelected
-                    ? const Color(0xFF1735B4)
-                    : Colors.white,
+                color: isSelected ? const Color(0xFF1735B4) : Colors.white,
 
                 border: Border.all(
                   color: isSelected
@@ -451,11 +432,7 @@ class _QuestionPageState extends State<QuestionPage> {
               ),
 
               child: isSelected
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 18,
-                    )
+                  ? const Icon(Icons.check, color: Colors.white, size: 18)
                   : null,
             ),
 
@@ -506,9 +483,7 @@ class _QuestionPageState extends State<QuestionPage> {
       if (selectedAnswer == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Selecione uma alternativa antes de voltar.',
-            ),
+            content: Text('Selecione uma alternativa antes de voltar.'),
           ),
         );
 
@@ -519,11 +494,7 @@ class _QuestionPageState extends State<QuestionPage> {
 
       if (selectedAnswer == correctAnswer) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Você acertou a questão na revisão!',
-            ),
-          ),
+          const SnackBar(content: Text('Você acertou a questão na revisão!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -535,14 +506,11 @@ class _QuestionPageState extends State<QuestionPage> {
         );
       }
 
-      Future.delayed(
-        const Duration(milliseconds: 700),
-        () {
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        },
-      );
+      Future.delayed(const Duration(milliseconds: 700), () {
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      });
 
       return;
     }
@@ -554,9 +522,7 @@ class _QuestionPageState extends State<QuestionPage> {
     if (selectedAnswer == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Selecione uma alternativa antes de continuar.',
-          ),
+          content: Text('Selecione uma alternativa antes de continuar.'),
         ),
       );
 
@@ -576,8 +542,7 @@ class _QuestionPageState extends State<QuestionPage> {
       }
 
       // Pega o conteúdo relacionado à questão.
-      if (_assunto.isNotEmpty &&
-          !contentsToReview.contains(_assunto)) {
+      if (_assunto.isNotEmpty && !contentsToReview.contains(_assunto)) {
         contentsToReview.add(_assunto);
       }
     }
@@ -586,13 +551,23 @@ class _QuestionPageState extends State<QuestionPage> {
     // SE AINDA NÃO TERMINOU
     // ------------------------------------------------------------
 
+    // ------------------------------------------------------------
+    // SE AINDA NÃO TERMINOU
+    // ------------------------------------------------------------
+
     if (currentQuestion < totalQuestions) {
+      // Marca esta questão como já usada para não repetir.
+      if (_currentQuestionId != null &&
+          !_usedQuestionIds.contains(_currentQuestionId)) {
+        _usedQuestionIds.add(_currentQuestionId!);
+      }
+
       setState(() {
         currentQuestion++;
         selectedAnswer = null;
       });
-      _carregarQuestao();
 
+      _carregarQuestao();
       return;
     }
 
@@ -613,10 +588,7 @@ class _QuestionPageState extends State<QuestionPage> {
     // ------------------------------------------------------------
 
     if (wrongQuestions.isEmpty) {
-      Navigator.pushReplacementNamed(
-        context,
-        '/perfect_result',
-      );
+      Navigator.pushReplacementNamed(context, '/perfect_result');
 
       return;
     }
@@ -629,8 +601,7 @@ class _QuestionPageState extends State<QuestionPage> {
       context,
       '/performance',
       arguments: {
-        'correctAnswers':
-          totalQuestions - wrongQuestions.length,
+        'correctAnswers': totalQuestions - wrongQuestions.length,
         'totalQuestions': totalQuestions,
         'wrongQuestions': wrongQuestions,
         'reviewTopics': contentsToReview,
