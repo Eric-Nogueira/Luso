@@ -1,29 +1,5 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-class InternetController extends GetxController {
-  final Connectivity connectivity = Connectivity();
-  RxString route = '/presentation'.obs; // torne observável se quiser reatividade
-
-  @override
-  void onInit() {
-    super.onInit();
-    connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-  }
-
-  void _updateConnectionStatus(List<ConnectivityResult> results) {
-    // Verifica se a lista contém apenas "none" ou se está vazia
-    if (results.contains(ConnectivityResult.none)) {
-      route.value = '/offline';
-      print('Sem internet → OfflinePage');
-    } else {
-      route.value = '/presentation';
-      print('Com internet → PresentationPage');
-    }
-  }
-}
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,21 +10,13 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-void initState() {
-  super.initState();
-  Future.delayed(const Duration(seconds: 3), () async {
-    if (!mounted) return;
-
-    // Obtém o status atual da conectividade
-    final connectivity = Connectivity();
-    final List<ConnectivityResult> results = await connectivity.checkConnectivity();
-    final bool isOffline = results.contains(ConnectivityResult.none);
-
-    // Define a rota com base no status atual
-    final String route = isOffline ? '/offline' : '/presentation';
-    Navigator.pushReplacementNamed(context, route);
-  });
-}
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/presentation');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,48 +24,19 @@ void initState() {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Background(),
-          Content(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Image.asset(
-              'assets/img/MASCOTE_LUSO.png',
-              fit: BoxFit.fitWidth,
-              width: MediaQuery.of(context).size.width,
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromARGB(255, 0, 87, 180),
+                  Color.fromARGB(255, 17, 0, 116),
+                ],
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class Background extends StatelessWidget {
-  const Background({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.fromARGB(255, 0, 87, 180),
-            Color.fromARGB(255, 17, 0, 116),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Content extends StatelessWidget {
-  const Content({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
+          Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -117,6 +56,17 @@ class Content extends StatelessWidget {
                 ),
               ],
             ),
-          );
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Image.asset(
+              'assets/img/MASCOTE_LUSO.png',
+              fit: BoxFit.fitWidth,
+              width: MediaQuery.of(context).size.width,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:luso/pages/results/PerformancePage.dart';
 import 'package:luso/pages/results/PerfectResultPage.dart';
 import 'pages/PresentationPage.dart';
@@ -8,7 +9,6 @@ import 'package:luso/pages/login/Login.dart';
 import 'package:luso/pages/login/forgetpassword/ForgetPassword.dart';
 import 'package:luso/pages/signin/SignIn.dart';
 import 'package:luso/pages/login/forgetpassword/SendEmail.dart';
-import 'package:luso/pages/special/Offline.dart';
 import 'package:luso/pages/QuestionPage.dart';
 
 class MyApp extends StatelessWidget {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
         fontFamily: 'Coolvetica',
         iconTheme: const IconThemeData(color: Colors.white),
@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
         '/send_email': (context) => const SendEmailPage(),
         '/forget_password': (context) => const ForgetPasswordPage(),
         '/signin': (context) => const SigninPage(),
-        '/offline': (context) => const OfflinePage(),
         '/questions': (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
 
