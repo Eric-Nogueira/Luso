@@ -200,21 +200,6 @@ class _PasswordTextField extends StatelessWidget {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/send_email');
-            },
-            child: const Text(
-              'Esqueci minha senha',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color.fromARGB(255, 0, 102, 255),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
