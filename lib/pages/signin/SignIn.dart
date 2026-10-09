@@ -59,7 +59,6 @@ class _SigninPageState extends State<SigninPage> {
         Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
-      print('Erro ao enviar dados: $e');
     }
   }
 

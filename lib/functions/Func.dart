@@ -18,16 +18,12 @@ class Func {
           name.isEmpty ||
           password.isEmpty ||
           confirmPassword.isEmpty) {
-        print('Todos os campos são obrigatórios');
         return 1;
       } else if (password != confirmPassword) {
-        print('As senhas não coincidem');
         return 2;
       } else if (password.length < 8) {
-        print('A senha deve conter pelo menos 8 caracteres');
         return 3;
       } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-        print('Formato de email inválido');
         return 4;
       } else {
         final response = await http
@@ -43,7 +39,6 @@ class Func {
             .timeout(
               const Duration(seconds: 10),
               onTimeout: () {
-                print('Tempo limite de conexão atingido');
                 return http.Response('Tempo limite de conexão atingido', 408);
               },
             );
@@ -52,7 +47,6 @@ class Func {
         print(response.body);
 
         if (response.body.toString().contains('Usuário já cadastrado')) {
-          print('Email já cadastrado');
           return 7;
         }
 
@@ -63,7 +57,6 @@ class Func {
         return 0;
       }
     } catch (e) {
-      print('Erro ao enviar dados: $e');
       return 6;
     }
   }
@@ -73,10 +66,8 @@ class Func {
       final url = Uri.parse('https://luso-backend-api.onrender.com/user/login');
 
       if (email.isEmpty || password.isEmpty) {
-        print('Todos os campos são obrigatórios');
         return 1;
       } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-        print('Formato de email inválido');
         return 2;
       } else {
         final response = await http
@@ -91,7 +82,6 @@ class Func {
             .timeout(
               const Duration(seconds: 10),
               onTimeout: () {
-                print('Tempo limite de conexão atingido');
                 return http.Response('Tempo limite de conexão atingido', 408);
               },
             );
@@ -107,12 +97,10 @@ class Func {
         if (responseData['status'] == 'success') {
           return 0;
         } else {
-          print('Credenciais inválidas');
           return 4;
         }
       }
     } catch (e) {
-      print('Erro ao enviar dados: $e');
       return 5;
     }
   }
@@ -135,7 +123,6 @@ class Func {
           .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
-              print('Tempo limite de conexão atingido');
               return http.Response('Tempo limite de conexão atingido', 408);
             },
           );
@@ -153,7 +140,6 @@ class Func {
       }
       return null;
     } catch (e) {
-      print("Erro: $e");
       return null;
     }
   }
