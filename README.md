@@ -3,9 +3,64 @@
 # Luso 🐦‍⬛
 Um app mobile Flutter feito para vestibulandos!
 
-## Qual o objetivo do app? 🤷‍♂️
-O app tem como objetivo facilitar o estudo para a seção de linguagens do ENEM, disponibilizando questões de edições anteriores do exame.
+## Sobre o projeto? 🤷
+Luso é um app mobile exequível em Android desenvolvido por alunos 3º ano "B" do ensino médio integrado ao técnico em informática para internet (3BII) do ano de 2026 do Instituto Federal de Educação, Ciências e Tecnologia Baiano - Campus Guanambi.  
 
-## Como o app funciona? 🤷‍♀️
-A aplicação divide as questões com base em seus conteúdos, exibe-as em formato de quiz, retorna a resolução de questões erradas e os tópicos que devem ser estudados.<br>
-O backend da aplicação, especialmente as requisições ao banco de dados, é feita através de uma API programada em PHP.
+A aplicação tem como objetivo principal auxilir o processo de preparação de estudantes para as provas de linguagens de vestibulares. Para isso, o sistema disponibiliza questões de anos anteriores do ENEM (Exame Nacional do Ensino Médio), armazena as respostas do usuário e, após serem respondidas 10 questões, o sistema retorna os acertos, erros e assuntos que o usuário deve estudar.  
+
+O público alvo da aplicação são estudantes e professores
+
+## Tecnologias utilizadas ⚒️ 
+* Dart
+* Flutter
+* Git
+* GitHub
+
+## Execução no Windows 💻
+### Requisitos 📄
+* Dart
+* Windows
+* API hospedada ou executada localmente ([*clique aqui para acessar o repositório da API*](https://github.com/Eric-Nogueira/Luso-backend-api))
+
+### Configuração ⚙️
+#### 1. Clone o repositório
+```
+git clone https://github.com/Eric-Nogueira/Luso/tree/main
+```
+
+#### 2. Acesse o projeto
+```bash
+cd luso
+```
+
+#### 3. Crie o arquivo de configuração
+```powershell
+New-Item config.json
+```
+
+Dentro do arquivo, cole
+```json
+{
+  "API_URL": "URL_OU_IP_DA_API"
+}
+```
+
+### Execução ▶️
+#### 1. Executar no navegador
+```powershell
+flutter run -d nome_do_navegador --dart-define-from-file=config.json
+```
+
+#### 2. Gerar APK
+```powershell
+flutter build apk --release --dart-define-from-file=config.json
+```
+
+## Instalação no Android 📱
+[Clique aqui](https://raw.githubusercontent.com/Eric-Nogueira/Luso/release/app-release.apk) ou siga os passos descritos na [seção anterior](#execução-no-windows).
+
+## Boas práticas ✅
+* Após adcionar ou retirar dependências e assets no `pubspec.yaml`, executar no terminal a linha `flutter pub get`
+* Manter todas as rotas no arquivo `lib/AppWidget.dart`
+* Manter as funções que dialogam com a API no arquivo `lib/functions/Func.dart`
+* Apagar a pasta `build` a cada build
