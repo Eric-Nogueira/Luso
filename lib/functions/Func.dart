@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 
 class Func {
   static String? token;
+  static const apiUrl = String.fromEnvironment('API_URL');
 
   Future<int> sendViaPost(
     String email,
@@ -12,7 +13,7 @@ class Func {
     String confirmPassword,
   ) async {
     try {
-      final url = Uri.parse('https://luso-backend-api.onrender.com/user/new');
+      final url = Uri.parse('${apiUrl}/user/new');
 
       if (email.isEmpty ||
           name.isEmpty ||
@@ -43,8 +44,8 @@ class Func {
               },
             );
 
-        print('POST ${url.toString()} -> ${response.statusCode}');
-        print(response.body);
+        // print('POST ${url.toString()} -> ${response.statusCode}');
+        // print(response.body);
 
         if (response.body.toString().contains('Usuário já cadastrado')) {
           return 7;
@@ -63,7 +64,7 @@ class Func {
 
   Future<int> login(String email, String password) async {
     try {
-      final url = Uri.parse('https://luso-backend-api.onrender.com/user/login');
+      final url = Uri.parse('${apiUrl}/user/login');
 
       if (email.isEmpty || password.isEmpty) {
         return 1;
@@ -86,8 +87,8 @@ class Func {
               },
             );
 
-        print('POST ${url.toString()} -> ${response.statusCode}');
-        print(response.body);
+        // print('POST ${url.toString()} -> ${response.statusCode}');
+        // print(response.body);
 
         if (response.statusCode < 200 || response.statusCode >= 300) {
           return 3;
@@ -111,7 +112,7 @@ class Func {
   }) async {
     try {
       final url = Uri.parse(
-        'https://luso-backend-api.onrender.com/questions/fase',
+        '${apiUrl}/questions/fase',
       );
 
       final response = await http
@@ -127,8 +128,8 @@ class Func {
             },
           );
 
-      print('POST ${url.toString()} -> ${response.statusCode}');
-      print(response.body);
+      // print('POST ${url.toString()} -> ${response.statusCode}');
+      // print(response.body);
 
       if (response.statusCode < 200 || response.statusCode >= 300) {
         return null;
