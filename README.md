@@ -57,7 +57,7 @@ flutter build apk --release --dart-define-from-file=config.json
 ```
 
 ## Instalação no Android 📱
-[Clique aqui](https://raw.githubusercontent.com/Eric-Nogueira/Luso/release/app-release.apk) ou siga os passos descritos na [seção anterior](#execução-no-windows).
+[Clique aqui](https://github.com/Eric-Nogueira/Luso/releases/download/v1.0.0/app-release.apk) ou siga os passos descritos na [seção anterior](#execução-no-windows).
 
 ## Boas práticas ✅
 * Após adcionar ou retirar dependências e assets no `pubspec.yaml`, executar no terminal a linha `flutter pub get`
