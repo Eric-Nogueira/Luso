@@ -25,12 +25,12 @@ O público alvo da aplicação são estudantes e professores
 ### Configuração ⚙️
 #### 1. Clone o repositório
 ```
-git clone https://github.com/Eric-Nogueira/Luso/tree/main
+git clone https://github.com/Eric-Nogueira/Luso
 ```
 
 #### 2. Acesse o projeto
 ```bash
-cd luso
+cd Luso
 ```
 
 #### 3. Crie o arquivo de configuração
@@ -64,3 +64,6 @@ flutter build apk --release --dart-define-from-file=config.json
 * Manter todas as rotas no arquivo `lib/AppWidget.dart`
 * Manter as funções que dialogam com a API no arquivo `lib/functions/Func.dart`
 * Apagar a pasta `build` a cada build
+
+## Contribuições ➕
+Por se tratar de um projeto escolar, tendo como principal objetivo a obtenção de nota na matéria de Projeto Integrador II, o projeto não aceita contribuições.
