@@ -27,39 +27,47 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/login': (context) => const LoginPage(),
         '/signin': (context) => const SigninPage(),
+
         '/questions': (context) {
-        final args = ModalRoute.of(context)?.settings.arguments;
+          final args = ModalRoute.of(context)?.settings.arguments;
 
-         int initialQuestion = 1;
-         bool reviewMode = false;
+          int initialQuestion = 1;
+          bool reviewMode = false;
+          Map<String, dynamic>? reviewData;
 
-         if (args is Map) {
-          initialQuestion =
-          args['initialQuestion'] ?? 1;
+          if (args is Map) {
+            initialQuestion = args['initialQuestion'] ?? 1;
+            reviewMode      = args['reviewMode'] ?? false;
+            reviewData      = args['reviewData'] is Map
+                ? Map<String, dynamic>.from(args['reviewData'] as Map)
+                : null;
+          }
 
-          reviewMode =
-            args['reviewMode'] ?? false;
-  }
+          // Repassa reviewData via arguments para o QuestionPage ler no initState.
+          return QuestionPage(
+            initialQuestion: initialQuestion,
+            reviewMode:      reviewMode,
+            // Se você preferir, pode passar reviewData como parâmetro do
+            // QuestionPage em vez de usar ModalRoute. Aqui mantive o padrão
+            // de ler via ModalRoute no initState.
+          );
+        },
 
-  return QuestionPage(
-    initialQuestion: initialQuestion,
-    reviewMode: reviewMode,
-  );
-},
         '/perfect_result': (context) => const PerfectResultPage(),
 
         '/performance': (context) {
           final args =
-            ModalRoute.of(context)?.settings.arguments as Map;
+              ModalRoute.of(context)?.settings.arguments as Map;
 
           return PerformancePage(
-            correctAnswers: args['correctAnswers'],
-            totalQuestions: args['totalQuestions'],
+            correctAnswers: args['correctAnswers'] as int,
+            totalQuestions: args['totalQuestions'] as int,
+            // >>> CORREÇÃO: agora é List<Map<String, dynamic>>
             wrongQuestions:
-              List<int>.from(args['wrongQuestions']),
+                List<Map<String, dynamic>>.from(args['wrongQuestions']),
             reviewTopics:
-              List<String>.from(args['reviewTopics']),
-            fase: args['fase'],
+                List<String>.from(args['reviewTopics']),
+            fase: args['fase'] as int,
           );
         },
       },

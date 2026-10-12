@@ -41,10 +41,13 @@ class _QuestionPageState extends State<QuestionPage> {
   String? _currentQuestionId;
 
   // Guarda as questões que o usuário errou.
-  final List<int> wrongQuestions = [];
+  final List<Map<String, dynamic>> wrongQuestions = [];
 
   // Guarda os conteúdos relacionados aos erros.
   final List<String> contentsToReview = [];
+
+  List<Map<String, dynamic>> _reviewList = [];
+  int _reviewIndex = 0;
 
   // ============================================================
   // DADOS VINDOS DA API
@@ -76,7 +79,56 @@ class _QuestionPageState extends State<QuestionPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
       _fase = (args?['fase'] as int?) ?? 1;
+
+      // ============================================================
+      // MODO REVISÃO: usa a lista passada, não consulta a API.
+      // ============================================================
+      if (widget.reviewMode) {
+        final rawList = args?['reviewList'];
+
+        if (rawList is List) {
+          _reviewList = rawList
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+        } else if (args?['reviewData'] is Map) {
+          // Compatibilidade com o formato antigo (uma só questão).
+          _reviewList = [Map<String, dynamic>.from(args!['reviewData'] as Map)];
+        }
+
+        final rawIndex = args?['reviewIndex'];
+        _reviewIndex =
+            (rawIndex is int && rawIndex >= 0 && rawIndex < _reviewList.length)
+            ? rawIndex
+            : 0;
+
+        _loadReviewItem();
+        return;
+      }
+
+      // Modo normal: sorteia questão da API.
       _carregarQuestao();
+    });
+  }
+
+  void _loadReviewItem() {
+    if (_reviewList.isEmpty) {
+      setState(() => _carregando = false);
+      return;
+    }
+
+    final q = _reviewList[_reviewIndex];
+
+    setState(() {
+      currentQuestion = (q['number'] as int?) ?? (_reviewIndex + 1);
+      _enunciado = q['enunciado'] as String? ?? '';
+      _alternativas = List<String?>.from(
+        (q['alternativas'] as List?) ?? const [],
+      );
+      _alternativaCorreta = q['correta'] as int? ?? 1;
+      _assunto = q['assunto'] as String? ?? '';
+      selectedAnswer = null;
+      _carregando = false;
     });
   }
 
@@ -132,7 +184,10 @@ class _QuestionPageState extends State<QuestionPage> {
       );
     }
 
-    double progress = currentQuestion / totalQuestions;
+    final bool isReview = widget.reviewMode && _reviewList.isNotEmpty;
+    final int displayNum = isReview ? (_reviewIndex + 1) : currentQuestion;
+    final int displayTot = isReview ? _reviewList.length : totalQuestions;
+    final double progress = displayNum / displayTot;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -214,8 +269,9 @@ class _QuestionPageState extends State<QuestionPage> {
                         // QUESTÃO X DE 10
                         // =================================================
                         Text(
-                          'Questão $currentQuestion de $totalQuestions',
-
+                          isReview
+                              ? 'Revisão $displayNum de $displayTot'
+                              : 'Questão $displayNum de $displayTot',
                           style: const TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 17,
@@ -348,11 +404,12 @@ class _QuestionPageState extends State<QuestionPage> {
 
                             child: Text(
                               widget.reviewMode
-                                  ? 'Voltar ao desempenho'
-                                  : currentQuestion == totalQuestions
-                                  ? 'Finalizar'
-                                  : 'Próxima questão',
-
+                                  ? (_reviewIndex < _reviewList.length - 1
+                                        ? 'Próxima questão'
+                                        : 'Concluir revisão')
+                                  : (currentQuestion == totalQuestions
+                                        ? 'Finalizar'
+                                        : 'Próxima questão'),
                               style: const TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 17,
@@ -485,31 +542,37 @@ class _QuestionPageState extends State<QuestionPage> {
       if (selectedAnswer == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Selecione uma alternativa antes de voltar.'),
+            content: Text('Selecione uma alternativa antes de continuar.'),
           ),
         );
-
         return;
       }
 
       final int correctAnswer = _alternativaCorreta;
+      final bool acertou = selectedAnswer == correctAnswer;
 
-      if (selectedAnswer == correctAnswer) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Você acertou a questão na revisão!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'A resposta correta é ${_letraDaAlternativa(correctAnswer)}.',
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            acertou
+                ? 'Você acertou a questão na revisão!'
+                : 'A resposta correta é ${_letraDaAlternativa(correctAnswer)}.',
           ),
-        );
-      }
+        ),
+      );
 
       Future.delayed(const Duration(milliseconds: 700), () {
-        if (mounted) {
+        if (!mounted) return;
+
+        // Ainda há questões a revisar?
+        if (_reviewIndex < _reviewList.length - 1) {
+          setState(() {
+            _reviewIndex++;
+            selectedAnswer = null;
+          });
+          _loadReviewItem();
+        } else {
+          // Fim da revisão: volta para a PerformancePage.
           Navigator.pop(context);
         }
       });
@@ -538,12 +601,22 @@ class _QuestionPageState extends State<QuestionPage> {
     final int correctAnswer = _alternativaCorreta;
 
     if (selectedAnswer != correctAnswer) {
-      // Evita adicionar a mesma questão duas vezes.
-      if (!wrongQuestions.contains(currentQuestion)) {
-        wrongQuestions.add(currentQuestion);
+      // Evita duplicar a mesma questão.
+      final alreadyAdded = wrongQuestions.any(
+        (q) => q['number'] == currentQuestion,
+      );
+
+      if (!alreadyAdded) {
+        wrongQuestions.add({
+          'number': currentQuestion,
+          'id': _currentQuestionId,
+          'enunciado': _enunciado,
+          'alternativas': List<String?>.from(_alternativas),
+          'correta': _alternativaCorreta,
+          'assunto': _assunto,
+        });
       }
 
-      // Pega o conteúdo relacionado à questão.
       if (_assunto.isNotEmpty && !contentsToReview.contains(_assunto)) {
         contentsToReview.add(_assunto);
       }
@@ -605,7 +678,7 @@ class _QuestionPageState extends State<QuestionPage> {
       arguments: {
         'correctAnswers': totalQuestions - wrongQuestions.length,
         'totalQuestions': totalQuestions,
-        'wrongQuestions': wrongQuestions,
+        'wrongQuestions': wrongQuestions, // agora List<Map>
         'reviewTopics': contentsToReview,
         'fase': _fase,
       },

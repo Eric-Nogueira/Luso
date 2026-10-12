@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PerformancePage extends StatelessWidget {
   final int correctAnswers;
   final int totalQuestions;
-  final List<int> wrongQuestions;
+  final List<Map<String, dynamic>> wrongQuestions;
   final List<String> reviewTopics;
   final int fase;
 
@@ -18,11 +18,9 @@ class PerformancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double percentage =
-        correctAnswers / totalQuestions;
+    final double percentage = correctAnswers / totalQuestions;
 
-    final int errors =
-        totalQuestions - correctAnswers;
+    final int errors = totalQuestions - correctAnswers;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
@@ -33,14 +31,11 @@ class PerformancePage extends StatelessWidget {
             // ==========================================================
             // CABEÇALHO
             // ==========================================================
-
             Container(
               width: double.infinity,
               height: 120,
 
-              padding: const EdgeInsets.symmetric(
-                horizontal: 25,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 25),
 
               decoration: const BoxDecoration(
                 color: Color(0xFF10279A),
@@ -53,11 +48,7 @@ class PerformancePage extends StatelessWidget {
 
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.show_chart,
-                    color: Colors.white,
-                    size: 30,
-                  ),
+                  const Icon(Icons.show_chart, color: Colors.white, size: 30),
 
                   const SizedBox(width: 18),
 
@@ -78,31 +69,21 @@ class PerformancePage extends StatelessWidget {
             // ==========================================================
             // CONTEÚDO
             // ==========================================================
-
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  24,
-                  28,
-                  24,
-                  30,
-                ),
+                padding: const EdgeInsets.fromLTRB(24, 28, 24, 30),
 
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: 650,
-                    ),
+                    constraints: const BoxConstraints(maxWidth: 650),
 
                     child: Column(
                       children: [
                         // ==================================================
                         // RESULTADO
                         // ==================================================
-
                         Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
                           children: [
                             // CÍRCULO DE ACERTOS
@@ -118,53 +99,41 @@ class PerformancePage extends StatelessWidget {
                                     width: 150,
                                     height: 150,
 
-                                    child:
-                                        CircularProgressIndicator(
+                                    child: CircularProgressIndicator(
                                       value: percentage,
                                       strokeWidth: 10,
 
-                                      backgroundColor:
-                                          const Color(
-                                        0xFFE7EAF7,
-                                      ),
+                                      backgroundColor: const Color(0xFFE7EAF7),
 
-                                      valueColor:
-                                          const AlwaysStoppedAnimation(
+                                      valueColor: const AlwaysStoppedAnimation(
                                         Color(0xFF10279A),
                                       ),
                                     ),
                                   ),
 
                                   Column(
-                                    mainAxisSize:
-                                        MainAxisSize.min,
+                                    mainAxisSize: MainAxisSize.min,
 
                                     children: [
                                       Text(
                                         '$correctAnswers/$totalQuestions',
 
-                                        style:
-                                            const TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 32,
-                                          fontWeight:
-                                              FontWeight.bold,
-                                          color:
-                                              Color(0xFF10279A),
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF10279A),
                                         ),
                                       ),
 
                                       const Text(
                                         'acertos',
 
-                                        style:
-                                            TextStyle(
+                                        style: TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 16,
-                                          fontWeight:
-                                              FontWeight.bold,
-                                          color:
-                                              Color(0xFF10279A),
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF10279A),
                                         ),
                                       ),
                                     ],
@@ -175,8 +144,7 @@ class PerformancePage extends StatelessWidget {
 
                             // ERROS
                             Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
 
                               children: [
                                 const Text(
@@ -185,10 +153,8 @@ class PerformancePage extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 18,
-                                    fontWeight:
-                                        FontWeight.bold,
-                                    color:
-                                        Color(0xFF222222),
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF222222),
                                   ),
                                 ),
 
@@ -198,37 +164,30 @@ class PerformancePage extends StatelessWidget {
                                   spacing: 8,
                                   runSpacing: 8,
 
-                                  children: List.generate(
-                                    totalQuestions,
-                                    (index) {
-                                      final bool isError =
-                                          index < errors;
+                                  children: List.generate(totalQuestions, (
+                                    index,
+                                  ) {
+                                    final bool isError = index < errors;
 
-                                      return Container(
-                                        width: 20,
-                                        height: 20,
+                                    return Container(
+                                      width: 20,
+                                      height: 20,
 
-                                        decoration:
-                                            BoxDecoration(
-                                          shape:
-                                              BoxShape.circle,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
 
+                                        color: isError
+                                            ? Colors.red
+                                            : Colors.white,
+
+                                        border: Border.all(
                                           color: isError
                                               ? Colors.red
-                                              : Colors.white,
-
-                                          border:
-                                              Border.all(
-                                            color: isError
-                                                ? Colors.red
-                                                : const Color(
-                                                    0xFFCCCCCC,
-                                                  ),
-                                          ),
+                                              : const Color(0xFFCCCCCC),
                                         ),
-                                      );
-                                    },
-                                  ),
+                                      ),
+                                    );
+                                  }),
                                 ),
                               ],
                             ),
@@ -240,11 +199,9 @@ class PerformancePage extends StatelessWidget {
                         // ==================================================
                         // QUESTÕES ERRADAS
                         // ==================================================
-
                         _sectionCard(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
                             children: [
                               const Text(
@@ -253,99 +210,74 @@ class PerformancePage extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 18,
-                                  fontWeight:
-                                      FontWeight.bold,
-                                  color:
-                                      Color(0xFF222222),
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF222222),
                                 ),
                               ),
 
                               const SizedBox(height: 16),
+                              // ==================================================
+                              // QUESTÕES ERRADAS
+                              // ==================================================
+                              ...List.generate(wrongQuestions.length, (i) {
+                                final wrongQuestion = wrongQuestions[i];
+                                final int questionNumber =
+                                    wrongQuestion['number'] as int;
 
-                              ...wrongQuestions.map(
-                                (questionNumber) {
-                                  return InkWell(
-                                    borderRadius:
-                                        BorderRadius.circular(
-                                      12,
+                                return InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/questions',
+                                      arguments: {
+                                        'reviewMode': true,
+                                        'reviewList':
+                                            wrongQuestions, // lista completa
+                                        'reviewIndex': i, // começa nesta
+                                        'fase': fase,
+                                      },
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
                                     ),
-
-                                    // ==================================================
-                                    // ABRIR A QUESTÃO ERRADA
-                                    // ==================================================
-
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/questions',
-                                        arguments: {
-                                          'initialQuestion':
-                                              questionNumber,
-                                          'reviewMode': true,
-                                          'fase': fase,
-                                        },
-                                      );
-                                    },
-
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets
-                                              .symmetric(
-                                        vertical: 10,
-                                      ),
-
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 24,
-                                            height: 24,
-
-                                            decoration:
-                                                const BoxDecoration(
-                                              shape:
-                                                  BoxShape.circle,
-                                              color: Colors.red,
-                                            ),
-
-                                            child:
-                                                const Icon(
-                                              Icons.close,
-                                              color:
-                                                  Colors.white,
-                                              size: 17,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.red,
+                                          ),
+                                          child: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size: 17,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 15),
+                                        Expanded(
+                                          child: Text(
+                                            'Questão $questionNumber',
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
-
-                                          const SizedBox(
-                                            width: 15,
-                                          ),
-
-                                          Expanded(
-                                            child: Text(
-                                              'Questão $questionNumber',
-
-                                              style:
-                                                  const TextStyle(
-                                                fontFamily:
-                                                    'Inter',
-                                                fontSize: 16,
-                                                fontWeight:
-                                                    FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-
-                                          const Icon(
-                                            Icons.chevron_right,
-                                            color:
-                                                Color(0xFF10279A),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        const Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xFF10279A),
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              }),
                             ],
                           ),
                         ),
@@ -355,11 +287,9 @@ class PerformancePage extends StatelessWidget {
                         // ==================================================
                         // CONTEÚDOS PARA REVISAR
                         // ==================================================
-
                         _sectionCard(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
                             children: [
                               const Text(
@@ -368,67 +298,50 @@ class PerformancePage extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 18,
-                                  fontWeight:
-                                      FontWeight.bold,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
 
                               const SizedBox(height: 16),
 
-                              ...reviewTopics.map(
-                                (topic) {
-                                  return Padding(
-                                    padding:
-                                        const EdgeInsets
-                                            .symmetric(
-                                      vertical: 7,
-                                    ),
+                              ...reviewTopics.map((topic) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 7,
+                                  ),
 
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
 
-                                      children: [
-                                        const Padding(
-                                          padding:
-                                              EdgeInsets.only(
-                                            top: 5,
-                                          ),
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 5),
 
-                                          child: Icon(
-                                            Icons.circle,
-                                            size: 7,
-                                            color:
-                                                Color(0xFF10279A),
-                                          ),
+                                        child: Icon(
+                                          Icons.circle,
+                                          size: 7,
+                                          color: Color(0xFF10279A),
                                         ),
+                                      ),
 
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
+                                      const SizedBox(width: 10),
 
-                                        Expanded(
-                                          child: Text(
-                                            topic,
+                                      Expanded(
+                                        child: Text(
+                                          topic,
 
-                                            style:
-                                                const TextStyle(
-                                              fontFamily:
-                                                  'Inter',
-                                              fontSize: 15,
-                                              color:
-                                                  Color(
-                                                0xFF333333,
-                                              ),
-                                            ),
+                                          style: const TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 15,
+                                            color: Color(0xFF333333),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
                             ],
                           ),
                         ),
@@ -438,40 +351,32 @@ class PerformancePage extends StatelessWidget {
                         // ==================================================
                         // REVISAR QUESTÕES
                         // ==================================================
-
                         SizedBox(
                           width: double.infinity,
                           height: 58,
 
                           child: ElevatedButton(
                             onPressed: () {
-                              if (wrongQuestions.isEmpty) {
-                                return;
-                              }
+                              if (wrongQuestions.isEmpty) return;
 
                               Navigator.pushNamed(
                                 context,
                                 '/questions',
                                 arguments: {
-                                  'initialQuestion':
-                                      wrongQuestions.first,
                                   'reviewMode': true,
+                                  'reviewList': wrongQuestions, // todas
+                                  'reviewIndex': 0,
+                                  'fase': fase,
                                 },
                               );
                             },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF10279A),
 
-                            style:
-                                ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xFF10279A),
+                              foregroundColor: Colors.white,
 
-                              foregroundColor:
-                                  Colors.white,
-
-                              shape:
-                                  RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                               ),
 
                               elevation: 0,
@@ -483,8 +388,7 @@ class PerformancePage extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 17,
-                                fontWeight:
-                                    FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -495,35 +399,29 @@ class PerformancePage extends StatelessWidget {
                         // ==================================================
                         // VOLTAR AO INÍCIO
                         // ==================================================
-
                         SizedBox(
                           width: double.infinity,
                           height: 58,
 
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator
-                                  .pushNamedAndRemoveUntil(
+                              Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 '/home',
                                 (route) => false,
                               );
                             },
 
-                            style:
-                                OutlinedButton.styleFrom(
-                              foregroundColor:
-                                  const Color(0xFF10279A),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF10279A),
 
                               side: const BorderSide(
                                 color: Color(0xFF10279A),
                                 width: 1.5,
                               ),
 
-                              shape:
-                                  RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                               ),
                             ),
 
@@ -533,8 +431,7 @@ class PerformancePage extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 17,
-                                fontWeight:
-                                    FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -555,9 +452,7 @@ class PerformancePage extends StatelessWidget {
   // CARD DAS SEÇÕES
   // ==============================================================
 
-  Widget _sectionCard({
-    required Widget child,
-  }) {
+  Widget _sectionCard({required Widget child}) {
     return Container(
       width: double.infinity,
 
@@ -568,9 +463,7 @@ class PerformancePage extends StatelessWidget {
 
         borderRadius: BorderRadius.circular(22),
 
-        border: Border.all(
-          color: const Color(0xFFE2E2E2),
-        ),
+        border: Border.all(color: const Color(0xFFE2E2E2)),
       ),
 
       child: child,
